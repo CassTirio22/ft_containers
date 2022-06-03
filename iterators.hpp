@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/03 12:08:17 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/03 14:17:20 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,9 +245,7 @@ namespace ft {
 
 		/*----- Copy constructor -----*/
 
-		ReverseIterator(const ReverseIterator<iterator_type> &src) {
-			this->_it = src.base();
-		}
+		ReverseIterator(const ReverseIterator<iterator_type> &src) : _it(src.base()) {}
 
 
 		/*----- Destructor -----*/
@@ -258,7 +256,125 @@ namespace ft {
 		/*----- Getter of _it -----*/
 
 		iterator_type	base(void) const { return (this->_it); }
+
+
+		/*----- Dereference operator -----*/
+
+		reference	operator*(void) const {
+			iterator_type	ret = this->_it;
+			return (*(--ret));
+		}
+
+
+		/*----- Pointer to the value -----*/
+
+		pointer	operator->(void) const { return (&this->operator*()); }
+
+
+		/*----- Pre increment operator -----*/
+
+		ReverseIterator	&operator++(void) {
+			this->_it--;
+			return (*this);
+		}
+
+
+		/*----- Post increment operator -----*/
+
+		ReverseIterator	operator++(int n) {
+			static_cast<void>(n);
+			ReverseIterator	ret = *this;
+
+			this->_it--;
+			return (ret);
+		}
+
+
+		/*----- Pre decrement operator -----*/
+
+		ReverseIterator	&operator--(void) {
+			this->_it++;
+			return (*this);
+		}
+
+
+		/*----- Post decrement operator -----*/
+
+		ReverseIterator	operator--(int n) {
+			static_cast<void>(n);
+			ReverseIterator	ret = *this;
+
+			this->_it++;
+			return (ret);
+		}
+
+
+		/*----- Arithmetic + operator -----*/
+
+		ReverseIterator	operator+(difference_type n) { return (ReverseIterator(this->_it - n)); }
+
+
+		/*----- Arithmetic - operator -----*/
+
+		ReverseIterator operator-(difference_type n) { return (ReverseIterator(this->_it + n)); }
+
+
+		/*----- Arithmetic += operator -----*/
+
+		ReverseIterator	&operator+=(difference_type n) {
+			this->_it -= n;
+			return (*this);
+		}
+
+
+		/*----- Arithmetic -= operator -----*/
+
+		ReverseIterator	&operator-=(difference_type n) {
+			this->_it += n;
+			return (*this);
+		}
+
+		
+		/*----- Dereference [] operator -----*/
+
+		reference	operator[](difference_type n) const { return (*(this->_it + n)); }
 	};
+
+	/*----- Relational == operator -----*/
+
+	template <typename L_I, typename R_I>
+	bool	operator==(const ReverseIterator<L_I> &lhs, const ReverseIterator<R_I> &rhs) { return (lhs.base() == rhs.base()); }
+
+
+	/*----- Relational != operator -----*/
+	
+	template <typename L_I, typename R_I>
+	bool	operator!=(const ReverseIterator<L_I> &lhs, const ReverseIterator<R_I> &rhs) { return (lhs.base() != rhs.base()); }
+	
+	
+	/*----- Relational < operator -----*/
+
+	template <typename L_I, typename R_I>
+	bool	operator<(const ReverseIterator<L_I> &lhs, const ReverseIterator<R_I> &rhs) { return (lhs.base() < rhs.base()); }
+
+
+	/*----- Relational <= operator -----*/
+
+	template <typename L_I, typename R_I>
+	bool	operator<=(const ReverseIterator<L_I> &lhs, const ReverseIterator<R_I> &rhs) { return (lhs.base() <= rhs.base()); }
+
+
+	/*----- Relational > operator -----*/
+	
+	template <typename L_I, typename R_I>
+	bool	operator>(const ReverseIterator<L_I> &lhs, const ReverseIterator<R_I> &rhs) { return (lhs.base() > rhs.base()); }
+
+
+	/*----- Relational >= operator -----*/
+
+	template <typename L_I, typename R_I>
+	bool	operator>=(const ReverseIterator<L_I> &lhs, const ReverseIterator<R_I> &rhs) { return (lhs.base() >= rhs.base()); }
+
 };
 
 #endif
