@@ -1,22 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   ft_containers.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/03 11:15:21 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/03 11:15:22 by ctirions         ###   ########.fr       */
+/*   Created: 2022/06/03 11:12:47 by ctirions          #+#    #+#             */
+/*   Updated: 2022/06/03 11:15:14 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_containers.hpp"
+#ifndef FT_CONTAINERS_HPP
+# define FT_CONTAINERS_HPP
 
-int main(void){
+# include <iostream>
+# include <memory>
+# include <cstddef>
 
-	ft::RandomAccessIterator<std::vector<int> >	it;
 
-	std::cout << it.base() << std::endl;;
+# include "vector.hpp"
+# include "iterators.hpp"
 
-	return (0);
-}
+#endif

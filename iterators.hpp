@@ -6,18 +6,18 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/02 16:40:11 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/03 12:08:17 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ITERATORS_HPP
 # define ITERATORS_HPP
 
-# include <cstddef>
+#include "ft_containers.hpp"
 
 namespace ft {
 
-	// My Iterator struct
+	/*----- My Iterator struct -----*/
 	template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
 	struct Iterator {
 		typedef T         value_type;
@@ -27,146 +27,20 @@ namespace ft {
 		typedef Category  iterator_category;
 	};
 
-	// All tags of type Iterators
-	class BasicIteratorTag {};
+	/*----- All tags of type Iterators -----*/
 	class InputIteratorTag {};
 	class OutputIteratorTag {};
 	class ForwardIteratorTag {};
 	class BidirectionalIteratorTag {};
 	class RandomAccessIteratorTag {};
 
-	// BasicIterator
-	template <typename T>
-	class BasicIterator : public ft::Iterator<ft::BasicIteratorTag, T> {
-	public:
-		typedef typename ft::Iterator<ft::BasicIteratorTag, T>::value_type value_type;
-		typedef typename ft::Iterator<ft::BasicIteratorTag, T>::difference_type difference_type;
-		typedef typename ft::Iterator<ft::BasicIteratorTag, T>::pointer pointer;
-		typedef typename ft::Iterator<ft::BasicIteratorTag, T>::reference reference;
-		typedef typename ft::Iterator<ft::BasicIteratorTag, T>::iterator_category iterator_category;
 
 
-		// Copy constructor
-		BasicIterator(const BasicIterator &src) : _ptr(src.getPtr()) {}
-
-		// Assignation operator
-		const BasicIterator &operator=(const BasicIterator &rhs) {
-			if (this->_ptr != rhs.getPtr())
-				this->_ptr = rhs.getPtr();
-			return (*this);
-		}
-
-		// Destructor
-		virtual ~BasicIterator(void) {}
-
-		// Getter of _ptr
-		pointer	getPtr(void) const { return (this->_ptr); }
-
-		// Pre increment operator
-		BasicIterator	&operator++(void) {
-			this->_ptr++;
-			return (*this);
-		}
-
-		// Post increment operator
-		BasicIterator	operator++(int n) {
-			static_cast<void>(n);
-			BasicIterator ret(*this);
-
-			this->_ptr++;
-			return (ret);
-		}
-
-	protected:
-		pointer	_ptr;
-	};
-
-	// Input iterator
-	template <typename T>
-	class InputIterator : public virtual ft::BasicIterator<T> {
-	public:
-		typedef typename ft::Iterator<ft::InputIteratorTag, T>::value_type value_type;
-		typedef typename ft::Iterator<ft::InputIteratorTag, T>::difference_type difference_type;
-		typedef typename ft::Iterator<ft::InputIteratorTag, T>::pointer pointer;
-		typedef typename ft::Iterator<ft::InputIteratorTag, T>::reference reference;
-		typedef typename ft::Iterator<ft::InputIteratorTag, T>::iterator_category iterator_category;
-
-		// Equality comparaison
-		bool	operator==(const InputIterator &rhs) {
-			return (this->_ptr == rhs.getPtr())
-		}
-
-		// Inequality comparaison
-		bool	operator!=(const InputIterator &rhs) {
-			return (this->_ptr != rhs.getPtr())
-		}
-
-		// Dereference as rvalue
-		const reference	operator*(void) const { return (*this->_ptr); }
-		const pointer	operator->(void) const { return (this->_ptr); }
-
-	};
+	/*---------- RANDOM ACCESS ITERATORS ----------*/
 	
-	// Output iterator
 	template <typename T>
-	class OutputIterator : public virtual ft::BasicIterator<T> {
-	public:
-		typedef typename ft::Iterator<ft::OutputIteratorTag, T>::value_type value_type;
-		typedef typename ft::Iterator<ft::OutputIteratorTag, T>::difference_type difference_type;
-		typedef typename ft::Iterator<ft::OutputIteratorTag, T>::pointer pointer;
-		typedef typename ft::Iterator<ft::OutputIteratorTag, T>::reference reference;
-		typedef typename ft::Iterator<ft::OutputIteratorTag, T>::iterator_category iterator_category;
-
-		// Dereference as lvalue
-		reference	operator*(void) const { return (*this->_ptr); }
-		pointer		operator->(void) const { return (this->_ptr); }
-	};
-
-	// Forward iterator
-	template <typename T>
-	class ForwardIterator : public ft::Iterator<ForwardIteratorTag, T>, public ft::InputIterator<T>, public ft::OutputIterator<T> {
-	public:
-		typedef typename ft::Iterator<ft::ForwardIteratorTag, T>::value_type value_type;
-		typedef typename ft::Iterator<ft::ForwardIteratorTag, T>::difference_type difference_type;
-		typedef typename ft::Iterator<ft::ForwardIteratorTag, T>::pointer pointer;
-		typedef typename ft::Iterator<ft::ForwardIteratorTag, T>::reference reference;
-		typedef typename ft::Iterator<ft::ForwardIteratorTag, T>::iterator_category iterator_category;
-
-		// Default constructor
-		ForwardIterator(void) {
-			this->_ptr = NULL;
-		}
-	};
-
-	// Bidirectional iterator
-	template <typename T>
-	class BidirectionalIterator : public ft::Iterator<BidirectionalIteratorTag, T>, public ft::ForwardIterator<T> {
-	public:
-		typedef typename ft::Iterator<ft::BidirectionalIteratorTag, T>::value_type value_type;
-		typedef typename ft::Iterator<ft::BidirectionalIteratorTag, T>::difference_type difference_type;
-		typedef typename ft::Iterator<ft::BidirectionalIteratorTag, T>::pointer pointer;
-		typedef typename ft::Iterator<ft::BidirectionalIteratorTag, T>::reference reference;
-		typedef typename ft::Iterator<ft::BidirectionalIteratorTag, T>::iterator_category iterator_category;
-
-		// Pre decrement operator
-		BidirectionalIterator	&operator--(void) {
-			this->_ptr--;
-			return (*this);
-		}
-
-		// Post decrement operator
-		BidirectionalIterator	operator--(int n) {
-			static_cast<void>(n);
-			BidirectionalIterator ret(*this);
-
-			this->_ptr--;
-			return (ret);
-		}
-	};
-
-	// Random access iterator
-	template <typename T>
-	class RandomAccessIterator : public ft::Iterator<RandomAccessIteratorTag, T>, public ft::BidirectionalIterator<T> {
+	class RandomAccessIterator : public ft::Iterator<ft::RandomAccessIteratorTag, T> {
+	
 	public:
 		typedef typename ft::Iterator<ft::RandomAccessIteratorTag, T>::value_type value_type;
 		typedef typename ft::Iterator<ft::RandomAccessIteratorTag, T>::difference_type difference_type;
@@ -174,31 +48,217 @@ namespace ft {
 		typedef typename ft::Iterator<ft::RandomAccessIteratorTag, T>::reference reference;
 		typedef typename ft::Iterator<ft::RandomAccessIteratorTag, T>::iterator_category iterator_category;
 
-		// Arithmetic + and - operators
-		const RandomAccessIterator	operator+(difference_type n) const {
+	private:
+		pointer	_ptr;
+
+	public:
+
+		/*----- Copy constructor -----*/
+
+		RandomAccessIterator(const RandomAccessIterator &src) : _ptr(src.base()) {}
+
+
+		/*----- Assignation operator -----*/
+
+		const RandomAccessIterator &operator=(const RandomAccessIterator &rhs) {
+			if (this->_ptr != rhs.base())
+				this->_ptr = rhs.base();
+			return (*this);
+		}
+
+
+		/*----- Default constructor -----*/
+
+		RandomAccessIterator(void) {
+			this->_ptr = NULL;
+		}
+
+
+		/*----- Destructor -----*/
+
+		virtual ~RandomAccessIterator(void) {}
+
+
+		/*----- Getter of _ptr -----*/
+
+		pointer	base(void) const { return (this->_ptr); }
+
+
+		/*----- Pre increment operator -----*/
+
+		RandomAccessIterator	&operator++(void) {
+			this->_ptr++;
+			return (*this);
+		}
+
+
+		/*----- Post increment operator -----*/
+
+		RandomAccessIterator	operator++(int n) {
+			static_cast<void>(n);
+			RandomAccessIterator ret(*this);
+
+			this->_ptr++;
+			return (ret);
+		}
+
+
+		/*----- Equality comparaison -----*/
+
+		bool	operator==(const RandomAccessIterator &rhs) {
+			return (this->_ptr == rhs.base());
+		}
+
+
+		/*----- Inequality comparaison -----*/
+
+		bool	operator!=(const RandomAccessIterator &rhs) {
+			return (this->_ptr != rhs.base());
+		}
+
+		/*----- Dereferenced value -----*/
+		reference	operator*(void) const { return (*this->_ptr); }
+		pointer		operator->(void) const { return (this->_ptr); }
+		
+
+		/*----- Pre decrement operator -----*/
+
+		RandomAccessIterator	&operator--(void) {
+			this->_ptr--;
+			return (*this);
+		}
+
+
+		/*----- Post decrement operator -----*/
+
+		RandomAccessIterator	operator--(int n) {
+			static_cast<void>(n);
+			RandomAccessIterator ret(*this);
+
+			this->_ptr--;
+			return (ret);
+		}
+
+
+		/*----- Arithmetic + and - operators -----*/
+
+		RandomAccessIterator	operator+(difference_type n) {
 			RandomAccessIterator	ret(*this);
 
 			ret += n;
 			return (ret);
 		}
 
-		const RandomAccessIterator	operator+(difference_type n, RandomAccessIterator x) const {
-			x += n;
-			return (x);
-		}
-
-		const RandomAccessIterator	operator-(difference_type n) const {
+		RandomAccessIterator	operator-(difference_type n) {
 			RandomAccessIterator	ret(*this);
 
 			ret -= n;
 			return (ret);
 		}
 
-		const RandomAccessIterator	operator-(difference_type n, RandomAccessIterator x) const {
-			x -= n;
-			return (x);
+
+		/*----- Operator += -----*/
+
+		RandomAccessIterator	&operator+=(difference_type n) {
+			this->_ptr += n;
+			return (*this);
 		}
+
+
+		/*----- Operator -= -----*/
+
+		RandomAccessIterator	&operator-=(difference_type n) {
+			this->_ptr -= n;
+			return (*this);
+		}
+
+
+		/*----- Offset dereference operator -----*/
+
+		reference	operator[](difference_type n) const {
+			RandomAccessIterator ret = this + n;
+			return (*ret->base());
+		}
+
+	};
+
+
+	/*----- Relationals operators -----*/
+	
+	template <typename L_T, typename R_T = L_T>
+	bool operator==(const ft::RandomAccessIterator<L_T> &lhs, const ft::RandomAccessIterator<R_T> &rhs) {
+		return (lhs->base() == rhs->base());
 	}
+
+	template <typename L_T, typename R_T = L_T>
+	bool operator!=(const ft::RandomAccessIterator<L_T> &lhs, const ft::RandomAccessIterator<R_T> &rhs) {
+		return (lhs->base() != rhs->base());
+	}
+
+	template <typename L_T, typename R_T = L_T>
+	bool operator>(const ft::RandomAccessIterator<L_T> &lhs, const ft::RandomAccessIterator<R_T> &rhs) {
+		return (lhs->base() > rhs->base());
+	}
+
+	template <typename L_T, typename R_T = L_T>
+	bool operator>=(const ft::RandomAccessIterator<L_T> &lhs, const ft::RandomAccessIterator<R_T> &rhs) {
+		return (lhs->base() >= rhs->base());
+	}
+
+	template <typename L_T, typename R_T = L_T>
+	bool operator<(const ft::RandomAccessIterator<L_T> &lhs, const ft::RandomAccessIterator<R_T> &rhs) {
+		return (lhs->base() < rhs->base());
+	}
+
+	template <typename L_T, typename R_T = L_T>
+	bool operator<=(const ft::RandomAccessIterator<L_T> &lhs, const ft::RandomAccessIterator<R_T> &rhs) {
+		return (lhs->base() <= rhs->base());
+	}
+
+
+	/*---------- REVERSE ITERATORS ----------*/
+
+	template <class Iterator>
+	class ReverseIterator {
+	public:
+		typedef Iterator 											iterator_type;
+		typedef typename ft::Iterator<Iterator>::iterator_category	iterator_category;
+		typedef typename ft::Iterator<Iterator>::value_type			value_type;
+		typedef typename ft::Iterator<Iterator>::difference_type	difference_type;
+		typedef typename ft::Iterator<Iterator>::pointer			pointer;
+		typedef typename ft::Iterator<Iterator>::reference			reference;
+
+	private:
+		iterator_type	_it;
+
+	public:
+
+		/*----- Default constructor -----*/
+
+		ReverseIterator(void) : _it(NULL) {}
+		
+
+		/*----- Parameter constructor -----*/
+
+		ReverseIterator(iterator_type it) : _it(it) {}
+
+
+		/*----- Copy constructor -----*/
+
+		ReverseIterator(const ReverseIterator<iterator_type> &src) {
+			this->_it = src.base();
+		}
+
+
+		/*----- Destructor -----*/
+
+		~ReverseIterator(void) {}
+
+
+		/*----- Getter of _it -----*/
+
+		iterator_type	base(void) const { return (this->_it); }
+	};
 };
 
 #endif
