@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:12:47 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/03 11:15:14 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/07 16:39:07 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # include <cstddef>
 
 
-# include "vector.hpp"
 # include "iterators.hpp"
+# include "vector.hpp"
 
 #endif
