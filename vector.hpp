@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/07 16:40:16 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/08 17:19:29 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,71 @@ namespace ft {
 		typedef	ft::RandomAccessIterator<const value_type>	const_iterator;
 
 	private:
+
+		/*----- Allocator -----*/
+
 		allocator_type _alloc;
+
+		/*----- Max capacity -----*/
+
+		size_t	_capacity;
+
+		/*----- Actual size -----*/
+
+		size_t	_size;
+
+		/*----- Value -----*/
+
+		value_type	*_value;
+
+	public:
+
+		/*----- Constructors -----*/
+
+		explicit vector(const allocator_type &alloc = allocator_type()) : _alloc(alloc), _capacity(0), _size(0) {
+			this->_value = this->_alloc.allocate(0);
+		}
+
+		explicit vector(size_t n, const value_type &value = value_type(), const allocator_type &alloc = allocator_type()) : _alloc(alloc), _capacity(n), _size(n) {
+			if (n < 0)
+				throw (std::out_of_range("Capacity must be positif"));
+			this->_value = this->_alloc.allocate(n);
+			for (int i = 0; i < n; i++)
+				this->_alloc.construct(&this->_value[i], value);
+		}
+
+		template <class InputIterator>
+		vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) {
+			if (first > last)
+				throw (std::out_of_range("<first> iterator must be lower than <last> iterator"));
+			while (first++ != last)
+				this->_size++;
+			this->_capacity = this->_size;
+			first -= size;
+			this->_value = this->_alloc.allocate(this->_size);
+			for (int i = 0; i < this->_size; i++) {
+				this->_alloc.construct(&this->_value[i], *first);
+				first++;
+			}
+		}
+
+		vector(const vector &src) : _alloc(src._alloc), _size(src._size), _capacity(src._capacity) {
+			this->_value = this->_alloc.allocate(this->_size);
+			for (int i = 0; i < this->_size; i++)
+				this->_alloc.construct(&this->_value[i], src._value[i]);
+		}
+
+		/*----- Destructor -----*/
+
+		~vector(void) {
+			for (int i = 0; i < this->_size; i++)
+				this->_alloc.destroy(&this->_value[i]);
+			this->_alloc.deallocate(this->_value, this->_size);
+		}
+
+		/*-----  -----*/
+		/*-----  -----*/
+		/*-----  -----*/
 	};
 
 }
