@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/13 16:40:12 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/13 19:28:04 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,13 +67,13 @@ namespace ft {
 		}
 
 		template <class InputIterator>
-		vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) {
+		vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) : _alloc(alloc), _size(0); {
 			if (first > last)
 				throw (std::out_of_range("<first> iterator must be lower than <last> iterator"));
 			while (first++ != last)
 				this->_size++;
 			this->_capacity = this->_size;
-			first -= size;
+			first -= this->_size;
 			this->_value = this->_alloc.allocate(this->_size);
 			for (int i = 0; i < this->_size; i++) {
 				this->_alloc.construct(&this->_value[i], *first);
@@ -92,7 +92,7 @@ namespace ft {
 		~vector(void) {
 			for (int i = 0; i < this->_size; i++)
 				this->_alloc.destroy(&this->_value[i]);
-			this->_alloc.deallocate(this->_value, this->_size);
+			this->_alloc.deallocate(this->_value, this->_capacity);
 		}
 
 		/*----- Iterators -----*/
@@ -154,25 +154,25 @@ namespace ft {
 		/*----- Element access -----*/
 
 		reference	operator[](size_type pos) const {
-			if (pos > this->_size || pos < 0)
+			if (pos >= this->_size || pos < 0)
 				throw (std::out_of_range("vector: out of range"));
 			return (this->_value[pos]);
 		}
 
 		const_reference	operator[](size_type pos) const {
-			if (pos > this->_size || pos < 0)
+			if (pos >= this->_size || pos < 0)
 				throw (std::out_of_range("vector: out of range"));
 			return (this->_value[pos]);
 		}
 
 		reference	at(size_type pos) const {
-			if (pos > this->_size || pos < 0)
+			if (pos >= this->_size || pos < 0)
 				throw (std::out_of_range("vector: out of range"));
 			return (this->_value[pos]);
 		}
 
 		const_reference	at(size_type pos) const {
-			if (pos > this->_size || pos < 0)
+			if (pos >= this->_size || pos < 0)
 				throw (std::out_of_range("vector: out of range"));
 			return (this->_value[pos]);
 		}
@@ -228,6 +228,58 @@ namespace ft {
 			this->_size = n;
 		}
 
+		void push_back(const_reference val) {
+			if (this->_size == this->_capacity)
+				this->reserve((!this->_size) ? 1 : 2 * this->_size);
+			this->_alloc.allocate(&this->_value[size], val);
+			this->_size++;
+		}
+
+		void	pop_back(void) {
+			if (!this->_size)
+				return ;
+			this->_alloc.destroy(this->_value[--this->_size]);
+		}
+
+		iterator	insert(iterator position, const_reference val) {
+			size_type	pos = -1;
+			size_type	end = this->_size;
+
+			for (size_type i = 0; i < this->_size; i++)
+				if (position == iterator(this->_value[i]))
+					pos = i;
+			if (pos == -1)
+				return (iterator());
+			this->_size++;
+			this->reserve(this->_size);
+			while (pos < end) {
+				this->_value[end] = this->_value[end - 1];
+				end--;
+			}
+			this->_alloc.construct(&this->_value[end], val);
+			return (iterator(this->_value[end]));
+		}
+
+		void	insert(iterator position, size_type n, const_reference val) {
+			int	pos = -1;
+			int	end = this->_size + n - 1;
+
+			for (size_type i = 0; i < this->_size; i++)
+				if (position == iterator(this->_value[i]))
+					pos = i;
+			if (pos == -1)
+				return (iterator());
+			this->_size += n;
+			this->reserve(this->_size);
+			while (pos < end) {
+				this->_value[end] = this->_value[end - n];
+				end--;
+			}
+			while (n) {
+				this->_alloc.construct(&this->_value[end - n], val);
+				n--;
+			}
+		}
 		/*-----  -----*/
 		/*-----  -----*/
 		/*-----  -----*/
