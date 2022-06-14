@@ -1,20 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   utils.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/03 11:15:21 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/14 14:55:20 by ctirions         ###   ########.fr       */
+/*   Created: 2022/06/14 16:57:07 by ctirions          #+#    #+#             */
+/*   Updated: 2022/06/14 17:03:35 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ft_containers.hpp"
-
-int main(void){
-
+#ifndef UTILS_HPP
+# define UTILS_HPP
 
 
-	return (0);
-}
+
+#endif

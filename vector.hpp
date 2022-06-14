@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/14 14:04:23 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/14 17:04:05 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,10 @@ namespace ft {
 		typedef typename allocator_type::size_type			size_type;
 		typedef typename allocator_type::difference_type	difference_type;
 
-		typedef ft::RandomAccessIterator<value_type>		iterator;
-		typedef	ft::RandomAccessIterator<const value_type>	const_iterator;
-		typedef	ft::ReverseIterator<value_type>				reverse_iterator;
-		typedef	ft::ReverseIterator<const value_type>		const_reverse_iterator;
+		typedef typename ft::RandomAccessIterator<value_type>		iterator;
+		typedef	typename ft::RandomAccessIterator<const value_type>	const_iterator;
+		typedef	typename ft::ReverseIterator<iterator>				reverse_iterator;
+		typedef	typename ft::ReverseIterator<const_iterator>		const_reverse_iterator;
 
 	private:
 
@@ -48,7 +48,7 @@ namespace ft {
 
 		/*----- Value -----*/
 
-		value_type	*_value;
+		pointer	_value;
 
 	public:
 
@@ -62,7 +62,7 @@ namespace ft {
 			if (n < 0)
 				throw (std::out_of_range("Capacity must be positif"));
 			this->_value = this->_alloc.allocate(n);
-			for (int i = 0; i < n; i++)
+			for (size_type i = 0; i < n; i++)
 				this->_alloc.construct(&this->_value[i], value);
 		}
 
@@ -90,14 +90,25 @@ namespace ft {
 		/*----- Destructor -----*/
 
 		~vector(void) {
-			for (int i = 0; i < this->_size; i++)
+			for (size_type i = 0; i < this->_size; i++)
 				this->_alloc.destroy(&this->_value[i]);
 			this->_alloc.deallocate(this->_value, this->_capacity);
 		}
 
+		/*----- Getter -----*/
+
+		allocator_type	get_allocator(void) const { return (this->_alloc); }
+
+		/*----- Setter -----*/
+
+		void	set_allocator(allocator_type alloc) { this->_alloc = alloc; }
+		void	set_size(size_type size) { this->_size = size; }
+		void	set_capacity(size_type capacity) { this->_capacity = capacity; }
+		void	set_value(pointer p) { this->_value = p; }
+
 		/*----- Iterators -----*/
 
-		iterator	begin(void) { return (iterator(this->_value)); }
+		iterator	begin(void) { return (this->_value); }
 
 		const_iterator	begin(void) const { return (const_iterator(this->_value)); }
 
@@ -142,9 +153,9 @@ namespace ft {
 
 			pointer old_value = this->_value;
 			this->_value = this->_alloc.allocate(n);
-			for (int i = 0; i < this->_size; i++)
+			for (size_type i = 0; i < this->_size; i++)
 				this->_alloc.construct(&this->_value[i], old_value[i]);
-			for	(int i = 0; i < this->_size; i++)
+			for	(size_type i = 0; i < this->_size; i++)
 				this->_alloc.destroy(&old_value[i]);
 			this->_alloc.deallocate(old_value, this->_capacity);
 			this->_capacity = n;
@@ -281,6 +292,8 @@ namespace ft {
 			}
 		}
 
+		void	insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = nullptr)
+
 		template <class InputIterator>
 		void	insert(iterator position, InputIterator first, InputIterator last) {
 			size_type	n = 0;
@@ -344,9 +357,22 @@ namespace ft {
 		}
 
 		void	swap(vector &x) {
-			vector tmp = x;
-			x = *this;
-			*this = tmp;
+			vector tmp;
+
+			tmp.set_allocator(x.get_allocator());
+			tmp.set_capacity(x.capacity());
+			tmp.set_size(x.size());
+			tmp.set_value(x.begin());
+
+			x.set_allocator(this->_alloc);
+			x.set_capacity(this->_capacity);
+			x.set_size(this->_size);
+			x.set_value(this->begin());
+
+			this->set_allocator(tmp.get_allocator());
+			this->set_capacity(tmp.capacity());
+			this->set_size(tmp.size());
+			this->set_value(tmp.begin());
 		}
 
 		void	clear(void) {
@@ -354,20 +380,7 @@ namespace ft {
 				this->_alloc.destroy(&this->_value[i]);
 			this->_size = 0;
 		}
-
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
 	};
-
 }
 
 #endif
