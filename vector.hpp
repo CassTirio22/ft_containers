@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/13 19:28:04 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/14 14:04:23 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ namespace ft {
 		}
 
 		template <class InputIterator>
-		vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) : _alloc(alloc), _size(0); {
+		vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) : _alloc(alloc), _size(0) {
 			if (first > last)
 				throw (std::out_of_range("<first> iterator must be lower than <last> iterator"));
 			while (first++ != last)
@@ -103,15 +103,15 @@ namespace ft {
 
 		iterator	end(void) { return (iterator(this->_value + this->_size)); }
 
-		const_iterator	end(void) { return (const_iterator(this->_value + this->_size)); }
+		const_iterator	end(void) const { return (const_iterator(this->_value + this->_size)); }
 
 		reverse_iterator	rbegin(void) { return (reverse_iterator(this->_value + this->_size)); }
 
-		const_reverse_iterator	rbegin(void) { return (const_reverse_iterator(this->_value + this->_size)); }
+		const_reverse_iterator	rbegin(void) const { return (const_reverse_iterator(this->_value + this->_size)); }
 
 		reverse_iterator	rend(void) { return (reverse_iterator(this->_value)); }
 
-		const_reverse_iterator	rend(void) { return (const_reverse_iterator(this->_value)); }
+		const_reverse_iterator	rend(void) const { return (const_reverse_iterator(this->_value)); }
 
 		/*----- Capacity -----*/
 
@@ -153,7 +153,7 @@ namespace ft {
 
 		/*----- Element access -----*/
 
-		reference	operator[](size_type pos) const {
+		reference	operator[](size_type pos) {
 			if (pos >= this->_size || pos < 0)
 				throw (std::out_of_range("vector: out of range"));
 			return (this->_value[pos]);
@@ -165,7 +165,7 @@ namespace ft {
 			return (this->_value[pos]);
 		}
 
-		reference	at(size_type pos) const {
+		reference	at(size_type pos) {
 			if (pos >= this->_size || pos < 0)
 				throw (std::out_of_range("vector: out of range"));
 			return (this->_value[pos]);
@@ -177,7 +177,7 @@ namespace ft {
 			return (this->_value[pos]);
 		}
 
-		reference	front(void) const {
+		reference	front(void) {
 			if (!this->_size)
 				throw (std::out_of_range("vector: out of range"));
 			return (this->_value[0]);
@@ -189,7 +189,7 @@ namespace ft {
 			return (this->_value[0]);
 		}
 
-		reference	back(void) const {
+		reference	back(void) {
 			if (!this->_size)
 				throw (std::out_of_range("vector: out of range"));
 			return (this->_value[this->_size - 1]);
@@ -205,7 +205,7 @@ namespace ft {
 
 		template <class InputIterator>
 		void	assign(InputIterator first, InputIterator last) {
-			int	i = 0;
+			size_type	i = 0;
 			InputIterator tmp = first;
 			while (tmp++ != last)
 				i++;
@@ -223,7 +223,7 @@ namespace ft {
 		void	assign(size_type n, const_reference val) {
 			this->resize(0);
 			this->reserve(n);
-			for (int i = 0; i < n; i++)
+			for (size_type i = 0; i < n; i++)
 				this->_alloc.construct(&this->_value[i], val);
 			this->_size = n;
 		}
@@ -231,7 +231,7 @@ namespace ft {
 		void push_back(const_reference val) {
 			if (this->_size == this->_capacity)
 				this->reserve((!this->_size) ? 1 : 2 * this->_size);
-			this->_alloc.allocate(&this->_value[size], val);
+			this->_alloc.allocate(&this->_value[this->_size], val);
 			this->_size++;
 		}
 
@@ -261,14 +261,14 @@ namespace ft {
 		}
 
 		void	insert(iterator position, size_type n, const_reference val) {
-			int	pos = -1;
-			int	end = this->_size + n - 1;
+			size_type	pos = -1;
+			size_type	end = this->_size + n - 1;
 
 			for (size_type i = 0; i < this->_size; i++)
 				if (position == iterator(this->_value[i]))
 					pos = i;
 			if (pos == -1)
-				return (iterator());
+				return ;
 			this->_size += n;
 			this->reserve(this->_size);
 			while (pos < end) {
@@ -280,6 +280,81 @@ namespace ft {
 				n--;
 			}
 		}
+
+		template <class InputIterator>
+		void	insert(iterator position, InputIterator first, InputIterator last) {
+			size_type	n = 0;
+			InputIterator tmp = first;
+			while (tmp++ != last)
+				n++;
+			size_type pos = -1;
+			size_type end = this->size + n - 1;
+
+			for (size_type i = 0; i < this->_size; i++)
+				if (position == iterator(this->_value[i]))
+					pos = i;
+			if (pos == -1)
+				return ;
+			this->_size += n;
+			this->reserve(this->_size);
+			while (pos < end) {
+				this->_value[end] = this->_value[end - n];
+				end--;
+			}
+			while (n) {
+				this->_alloc.construct(&this->_value[end - n], *last);
+				n--;
+				last--;
+			}
+		}
+
+		iterator	erase(iterator position) {
+			size_type	pos = -1;
+			for (size_type i = 0; i < this->_size; i++)
+				if (position == iterator(this->_value[i]))
+					pos = i;
+			if (pos == -1)
+				return (iterator());
+			this->_alloc.destroy(this->_value[pos]);
+			while (pos < this->_size) {
+				this->_value[pos] = this->_value[pos + 1];
+				pos++;
+			}
+			this->_size--;
+			return (iterator(this->_value[pos]));
+		}
+
+		iterator	erase(iterator first, iterator last) {
+			size_type	pos = -1;
+			size_type	len = 0;
+			for (size_type i = 0; i < this->_size; i++)
+				if (first == iterator(this->_value[i]))
+					pos = i;
+			if (pos == -1)
+				return (iterator());
+			while (first++ != last)
+				len++;
+			first -= len + 1;
+			for (size_type i = 0; i < len; i++) {
+				this->_alloc.destroy(&this->_value[pos + i]);
+				this->_value[pos + i] = this->_value[pos + i + len];
+			}
+			this->_size -= len;
+			return (iterator(this->_value[pos + len]));
+		}
+
+		void	swap(vector &x) {
+			vector tmp = x;
+			x = *this;
+			*this = tmp;
+		}
+
+		void	clear(void) {
+			for (size_type i = 0; i < this->_size; i++)
+				this->_alloc.destroy(&this->_value[i]);
+			this->_size = 0;
+		}
+
 		/*-----  -----*/
 		/*-----  -----*/
 		/*-----  -----*/
