@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/14 17:04:05 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/15 20:40:26 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,24 +67,33 @@ namespace ft {
 		}
 
 		template <class InputIterator>
-		vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type()) : _alloc(alloc), _size(0) {
-			if (first > last)
-				throw (std::out_of_range("<first> iterator must be lower than <last> iterator"));
-			while (first++ != last)
+		vector(InputIterator first, InputIterator last, const allocator_type &alloc = allocator_type(), typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) : _alloc(alloc), _size(0) {
+			InputIterator tmp = first;
+			while (tmp++ != last)
 				this->_size++;
 			this->_capacity = this->_size;
-			first -= this->_size;
 			this->_value = this->_alloc.allocate(this->_size);
-			for (int i = 0; i < this->_size; i++) {
+			for (size_type i = 0; i < this->_size; i++) {
 				this->_alloc.construct(&this->_value[i], *first);
 				first++;
 			}
 		}
 
-		vector(const vector &src) : _alloc(src.get_allocator()), _size(src.size()), _capacity(src.capacity()) {
+		vector(const vector &src) : _alloc(src.get_allocator()), _capacity(src.capacity()), _size(src.size()) {
 			this->_value = this->_alloc.allocate(this->_size);
-			for (int i = 0; i < this->_size; i++)
-				this->_alloc.construct(&this->_value[i], src.value()[i]);
+			for (size_type i = 0; i < this->_size; i++)
+				this->_alloc.construct(&this->_value[i], src.get_value()[i]);
+		}
+
+		vector	&operator=(const vector &v) {
+			this->_alloc = v.get_allocator();
+			this->_capacity = v.capacity();
+			this->_size = v.size();
+			this->_value = this->_alloc.allocate(this->_capacity);
+
+			for (size_type i = 0; i < this->_size; i++)
+				this->_alloc.construct(&this->_value[i], v.get_value()[i]);
+			return (*this);
 		}
 
 		/*----- Destructor -----*/
@@ -98,6 +107,7 @@ namespace ft {
 		/*----- Getter -----*/
 
 		allocator_type	get_allocator(void) const { return (this->_alloc); }
+		pointer			get_value(void) const { return (this->_value); }
 
 		/*----- Setter -----*/
 
@@ -215,7 +225,7 @@ namespace ft {
 		/*----- Modifiers -----*/
 
 		template <class InputIterator>
-		void	assign(InputIterator first, InputIterator last) {
+		void	assign(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
 			size_type	i = 0;
 			InputIterator tmp = first;
 			while (tmp++ != last)
@@ -242,7 +252,7 @@ namespace ft {
 		void push_back(const_reference val) {
 			if (this->_size == this->_capacity)
 				this->reserve((!this->_size) ? 1 : 2 * this->_size);
-			this->_alloc.allocate(&this->_value[this->_size], val);
+			this->_alloc.construct(&this->_value[this->_size], val);
 			this->_size++;
 		}
 
@@ -253,13 +263,13 @@ namespace ft {
 		}
 
 		iterator	insert(iterator position, const_reference val) {
-			size_type	pos = -1;
+			size_type	pos = 0;
 			size_type	end = this->_size;
 
-			for (size_type i = 0; i < this->_size; i++)
-				if (position == iterator(this->_value[i]))
-					pos = i;
-			if (pos == -1)
+			for (; pos <= this->_size; pos++)
+				if (&*position == &this->_value[pos])
+					break ;
+			if (pos == this->_size && position != this->end())
 				return (iterator());
 			this->_size++;
 			this->reserve(this->_size);
@@ -268,92 +278,80 @@ namespace ft {
 				end--;
 			}
 			this->_alloc.construct(&this->_value[end], val);
-			return (iterator(this->_value[end]));
+			return (iterator(&this->_value[pos]));
 		}
 
 		void	insert(iterator position, size_type n, const_reference val) {
-			size_type	pos = -1;
-			size_type	end = this->_size + n - 1;
+			size_type	pos = 0;
 
-			for (size_type i = 0; i < this->_size; i++)
-				if (position == iterator(this->_value[i]))
-					pos = i;
-			if (pos == -1)
+			for (; pos <= this->_size; pos++) {
+				if (&*position == &this->_value[pos])
+					break ;
+			}
+			if (pos == this->_size && position != this->end())
 				return ;
 			this->_size += n;
 			this->reserve(this->_size);
-			while (pos < end) {
-				this->_value[end] = this->_value[end - n];
-				end--;
-			}
-			while (n) {
-				this->_alloc.construct(&this->_value[end - n], val);
-				n--;
-			}
+			for (size_type i = 0; i < this->_size - n - pos; i++)
+				this->_value[this->_size - i - 1] = this->_value[this->_size - n - i - 1];
+			for (size_type i = 0; i < n; i++)
+				this->_alloc.construct(&this->_value[pos + i], val);
 		}
 
-		void	insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = nullptr)
-
 		template <class InputIterator>
-		void	insert(iterator position, InputIterator first, InputIterator last) {
+		void	insert(iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = NULL) {
 			size_type	n = 0;
 			InputIterator tmp = first;
 			while (tmp++ != last)
 				n++;
-			size_type pos = -1;
-			size_type end = this->size + n - 1;
-
-			for (size_type i = 0; i < this->_size; i++)
-				if (position == iterator(this->_value[i]))
-					pos = i;
-			if (pos == -1)
+			size_type pos = 0;
+			for (; pos <= this->_size; pos++)
+				if (&*position == &this->_value[pos])
+					break ;
+			if (pos == this->_size && position != this->end())
 				return ;
 			this->_size += n;
 			this->reserve(this->_size);
-			while (pos < end) {
-				this->_value[end] = this->_value[end - n];
-				end--;
-			}
-			while (n) {
-				this->_alloc.construct(&this->_value[end - n], *last);
-				n--;
-				last--;
-			}
+			for (size_type i = 0; i < this->_size - n - pos; i++)
+				this->_value[this->_size - i - 1] = this->_value[this->_size - n - i - 1];
+			for (size_type i = 0; i < n; i++)
+				this->_alloc.construct(&this->_value[pos + i], *first++);
 		}
 
 		iterator	erase(iterator position) {
-			size_type	pos = -1;
-			for (size_type i = 0; i < this->_size; i++)
-				if (position == iterator(this->_value[i]))
-					pos = i;
-			if (pos == -1)
+			size_type	pos = 0;
+
+			for (; pos <= this->_size; pos++)
+				if (&*position == &this->_value[pos])
+					break ;
+			if (pos == this->_size)
 				return (iterator());
-			this->_alloc.destroy(this->_value[pos]);
+			this->_alloc.destroy(&this->_value[pos]);
 			while (pos < this->_size) {
 				this->_value[pos] = this->_value[pos + 1];
 				pos++;
 			}
 			this->_size--;
-			return (iterator(this->_value[pos]));
+			return (position);
 		}
 
 		iterator	erase(iterator first, iterator last) {
-			size_type	pos = -1;
+			size_type	pos = 0;
 			size_type	len = 0;
-			for (size_type i = 0; i < this->_size; i++)
-				if (first == iterator(this->_value[i]))
-					pos = i;
-			if (pos == -1)
+			for (; pos <= this->_size; pos++)
+				if (&*first == &this->_value[pos])
+					break ;
+			if (pos == this->_size)
 				return (iterator());
-			while (first++ != last)
+			iterator tmp = first;
+			while (tmp++ != last)
 				len++;
-			first -= len + 1;
-			for (size_type i = 0; i < len; i++) {
+			for (size_type i = 0; i < this->_size - len - pos; i++) {
 				this->_alloc.destroy(&this->_value[pos + i]);
 				this->_value[pos + i] = this->_value[pos + i + len];
 			}
 			this->_size -= len;
-			return (iterator(this->_value[pos + len]));
+			return (first);
 		}
 
 		void	swap(vector &x) {
