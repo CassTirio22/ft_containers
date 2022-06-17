@@ -12,6 +12,8 @@ int		main(void)
 	for (int i = 0; i < size; ++i)
 		it[i] = (size - i) * 5;
 
+	printSize(vct, true);
+
 	it = it + 5;
 	it = 1 + it;
 	it = it - 4;

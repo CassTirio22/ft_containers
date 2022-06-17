@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/16 17:28:08 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/17 17:05:21 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -356,22 +356,21 @@ namespace ft {
 		}
 
 		void	swap(vector &x) {
-			vector tmp;
 
-			tmp.set_allocator(x.get_allocator());
-			tmp.set_capacity(x.capacity());
-			tmp.set_size(x.size());
-			tmp.set_value(x.begin());
+			allocator_type	alloc_tmp = x.get_allocator();
+			size_type		capacity_tmp = x.capacity();
+			size_type		size_tmp = x.size();
+			pointer			value_tmp = x.begin().base();
 
 			x.set_allocator(this->_alloc);
 			x.set_capacity(this->_capacity);
 			x.set_size(this->_size);
-			x.set_value(this->begin());
+			x.set_value(this->begin().base());
 
-			this->set_allocator(tmp.get_allocator());
-			this->set_capacity(tmp.capacity());
-			this->set_size(tmp.size());
-			this->set_value(tmp.begin());
+			this->set_allocator(alloc_tmp);
+			this->set_capacity(capacity_tmp);
+			this->set_size(size_tmp);
+			this->set_value(value_tmp);
 		}
 
 		void	clear(void) {
