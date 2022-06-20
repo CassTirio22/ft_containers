@@ -6,14 +6,15 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/17 17:05:21 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/20 16:31:44 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 
-# include "ft_containers.hpp"
+# include "utils.hpp"
+# include "iterators.hpp"
 
 namespace ft {
 
