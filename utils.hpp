@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.cpp                                          :+:      :+:    :+:   */
+/*   utils.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:57:07 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/20 16:30:42 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/21 19:24:40 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,38 @@ namespace ft {
 	template <> struct is_integral<unsigned short int> : public true_type {};
 	template <> struct is_integral<unsigned long int> : public true_type {};
 	template <> struct is_integral<unsigned long long int> : public true_type {};
+
+	/*----- Equal -----*/
+
+	template <class It1, class It2>
+	bool	equal(It1 first1, It1 last1, It2 first2) {
+		for (; first1 != last1; first1++, first2++)
+			if (!(*first1 == *first2))
+				return (false);
+		return (true);
+	}
+
+	template <class It1, class It2, class BinaryPredictate>
+	bool	equal(It1 first1, It1 last1, It2 first2, BinaryPredictate pred) {
+		for (; first1 != last1; first1++, first2++)
+			if (!pred(*first1, *first2))
+				return (false);
+		return (true);
+	}
+
+	/*----- Lexicographical compare -----*/
+
+	template <class It1, class It2>
+	bool lexicographicla_compare(It1 first1, It1 last1, It2 first2, It2 last2) {
+		for (; first1 != last1; first1++, first2++)
+		{
+			if (first2 == last2 || *first2 < *first1)
+				return (false);
+			else if (*first1 < *first2)
+				return (true);
+		}
+		return (first2 != last2);
+	}
 
 };
 
