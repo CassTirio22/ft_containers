@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/20 16:37:46 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/22 02:14:29 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,26 @@
 
 namespace ft {
 
+	/*----- Iterator traits -----*/
+
+	template <typename T>
+	class iterator_traits {
+		typedef ptrdiff_t					difference_type;
+		typedef T*							pointer;
+		typedef	T&							reference;
+		typedef T							type_value;
+		typedef	ft::RandomAccessIteratorTag	iterator_category;
+	};
+
 	/*----- My Iterator struct -----*/
 
 	template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
 	struct Iterator {
-		typedef T         value_type;
-		typedef Distance  difference_type;
-		typedef Pointer   pointer;
-		typedef Reference reference;
-		typedef Category  iterator_category;
+		typedef T			value_type;
+		typedef Distance	difference_type;
+		typedef Pointer		pointer;
+		typedef Reference	reference;
+		typedef Category	iterator_category;
 	};
 
 	/*----- All tags of type Iterators -----*/

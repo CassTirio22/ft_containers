@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/21 17:59:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/21 18:54:41 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/22 04:42:18 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,10 @@
 
 namespace ft {
 
+	/*---------- PAIR STRUCT ----------*/
+
 	template <class T1, class T2>
 	struct pair {
-
-
 	public:
 		T1	_first;
 		T2	_second;

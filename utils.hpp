@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:57:07 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/21 19:24:40 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/22 01:59:27 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,21 @@ namespace ft {
 
 	template <class It1, class It2>
 	bool lexicographicla_compare(It1 first1, It1 last1, It2 first2, It2 last2) {
-		for (; first1 != last1; first1++, first2++)
-		{
+		for (; first1 != last1; first1++, first2++) {
 			if (first2 == last2 || *first2 < *first1)
 				return (false);
 			else if (*first1 < *first2)
+				return (true);
+		}
+		return (first2 != last2);
+	}
+
+	template <class It1, class It2, class Compare>
+	bool lexicographicla_compare(It1 first1, It1 last1, It2 first2, It2 last2, Compare comp) {
+		for (; first1 != last1; first1++, first2++) {
+			if (first2 == last2 || comp(*first2, *first1))
+				return (false);
+			else if (comp(*first1, *first2))
 				return (true);
 		}
 		return (first2 != last2);
