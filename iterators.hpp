@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/22 02:14:29 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/24 16:52:29 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,14 @@
 
 namespace ft {
 
+	/*----- All tags of type Iterators -----*/
+
+	class InputIteratorTag {};
+	class OutputIteratorTag {};
+	class ForwardIteratorTag {};
+	class BidirectionalIteratorTag {};
+	class RandomAccessIteratorTag {};
+
 	/*----- Iterator traits -----*/
 
 	template <typename T>
@@ -25,7 +33,7 @@ namespace ft {
 		typedef T*							pointer;
 		typedef	T&							reference;
 		typedef T							type_value;
-		typedef	ft::RandomAccessIteratorTag	iterator_category;
+		typedef	RandomAccessIteratorTag	iterator_category;
 	};
 
 	/*----- My Iterator struct -----*/
@@ -38,14 +46,6 @@ namespace ft {
 		typedef Reference	reference;
 		typedef Category	iterator_category;
 	};
-
-	/*----- All tags of type Iterators -----*/
-
-	class InputIteratorTag {};
-	class OutputIteratorTag {};
-	class ForwardIteratorTag {};
-	class BidirectionalIteratorTag {};
-	class RandomAccessIteratorTag {};
 
 
 	/*---------- RANDOM ACCESS ITERATORS ----------*/
@@ -69,7 +69,7 @@ namespace ft {
 
 		RandomAccessIterator(const RandomAccessIterator &src) : _ptr(src.base()) {}
 		RandomAccessIterator(pointer p) : _ptr(p) {}
-		RandomAccessIterator(void) { this->_ptr = NULL; }
+		RandomAccessIterator(void) : _ptr(NULL) {}
 
 		/*----- Destructor -----*/
 
