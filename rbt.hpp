@@ -6,48 +6,75 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/24 16:27:57 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/28 18:59:04 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RBT_HPP
 # define RBT_HPP
 
+# include "pair.hpp"
+# include <functional>
+# include <memory>
+
 namespace ft {
 
-	enum rb_tree_color { _red = false, _black = true };
+	enum rbTreeColor { _red = false, _black = true };
 
-	struct rb_tree {
+	template <class Key, class T>
+	struct Node {
+		ft::pair<const Key, T>	_data;
+		Node					*_left;
+		Node					*_right;
+		Node					*_parent;
+	};
 
-		typedef	rb_tree*		base_ptr;
-		typedef	const rb_tree*	const_base_ptr;
+	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key, T> >, class Node = Node<const Key, T> >
+	class rbTree {
 
-		rb_tree_color	_color;
-		base_ptr		_parent;
-		base_ptr		_left;
-		base_ptr		_right;
+		public:
+			typedef				Key										key_type;
+			typedef				T										mapped_type;
+			typedef				Compare									key_compare;
+			typedef	typename	ft::pair<Key, T>						value_type;
+			typedef				Alloc									allocator_type;
+			typedef	typename	std::allocator<ft::Node<const Key, T> >	node_allocator_type;
+			typedef	typename	Alloc::size_type						size_type;
+			typedef	typename	Alloc::difference_type					difference_type;
 
-		/*---------- FUNCTIONS ----------*/
+		private:
+			Node				*_root;
+			Node				*_null_node;
+			key_compare			_cmp;
+			allocator_type		_alloc;
+			node_allocator_type	_node_alloc;
 
-		static base_ptr	minimum(base_ptr x) {
+		public:
+
+		/*---------- MEMBER FUNCTIONS ----------*/
+
+		/*----- Constructors -----*/
+
+		rbTree(key_compare &cmp = key_compare(), allocator_type &alloc = allocator_type()) : _cmp(cmp), _alloc(alloc), _node_alloc(node_allocator_type()) {
+			_null_node = _node_alloc.allocate(1);
+			_alloc.construct(&_null_node, value_type());
+			_null_node->parent = NULL;
+			_null_node->left = NULL;
+			_null_node->right = NULL;
+			_root = _null_node;
+		}
+
+		/*-----  -----*/
+		/*-----  -----*/
+		/*-----  -----*/
+		/*-----  -----*/
+		static Node	*minimum(Node* x) {
 			while (x->_left)
 				x = x->_left;
 			return (x);
 		}
 
-		static const_base_ptr	minimum(const_base_ptr x) {
-			while (x->_left)
-				x = x->_left;
-			return (x);
-		}
-
-		static base_ptr	maximum(base_ptr x) {
-			while (x->_right)
-				x = x->_right;
-			return (x);
-		}
-
-		static const_base_ptr	maximum(const_base_ptr x) {
+		static Node*	maximum(Node* x) {
 			while (x->_right)
 				x = x->_right;
 			return (x);
