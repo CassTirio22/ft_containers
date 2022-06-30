@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/28 18:59:04 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/06/30 18:05:14 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,23 @@ namespace ft {
 			_root = _null_node;
 		}
 
-		/*-----  -----*/
+		/*----- ft_next -----*/
+
+		Node	*ft_next(Node *node) {
+			Node	*tmp;
+
+			if (node->_right == _null_node) {
+				tmp = node;
+				while (tmp->_parent != _null_node && tmp == tmp->_parent->_right)
+					tmp = tmp->_parent;
+				tmp = tmp->_parent;
+				return (tmp);
+			}
+			tmp = node->_right;
+			while (tmp->_left != _null_node)
+				tmp = tmp->_left;
+			return (tmp);
+		}
 		/*-----  -----*/
 		/*-----  -----*/
 		/*-----  -----*/
