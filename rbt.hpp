@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/30 18:05:14 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/09 18:05:16 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,33 @@ namespace ft {
 			_root = _null_node;
 		}
 
-		/*----- ft_next -----*/
+		/*----- Destructor -----*/
+
+		~rbTree(void) {
+			_node_alloc.destroy(_null_node);
+			_node_alloc.deallocate(_null_node, 1);
+		}
+		/*-----  -----*/
+		/*-----  -----*/
+
+		/*----- Insert -----*/
+
+		void	insert(Node *node, value_type val) {
+			if (_root == _null_node)
+				_root = newNode(val);
+			else if (node == _null_node)
+				node = newNode(val);
+			else if (_cmp(val._first, node->_data._first)) {
+				node->_left = insert(node->_left, val);
+				node->left->_parent = node;
+			}
+			else if (_cmp(node->_data._first, val._first)) {
+				node->_right = insert(node->_right, val);
+				node->right->_parent = node;
+			}
+		}
+
+		/*----- Utils -----*/
 
 		Node	*ft_next(Node *node) {
 			Node	*tmp;
@@ -81,9 +107,32 @@ namespace ft {
 				tmp = tmp->_left;
 			return (tmp);
 		}
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
+
+		Node	*ft_prev(Node *node) {
+			Node	*tmp;
+
+			if (node->_left == _null_node) {
+				tmp = node;
+				while (tmp->_parent != _null_node && tmp == tmp->_parent->_left)
+					tmp = tmp->_parent;
+				tmp = tmp->_parent;
+				return (tmp);
+			}
+			tmp = node->_left;
+			while (tmp->_left != _null_node)
+				tmp = tmp->_left;
+			return (tmp);
+		}
+
+		Node *newNode(value_type val) {
+			Node	*ret = _node_alloc.allocate(1);
+			_node_alloc.construct(&ret->_data, val);
+			ret->_parent = NULL;
+			ret->_left = _null_node;
+			ret->_right = _null_node;
+			return (ret);
+		}
+
 		static Node	*minimum(Node* x) {
 			while (x->_left)
 				x = x->_left;
@@ -94,6 +143,26 @@ namespace ft {
 			while (x->_right)
 				x = x->_right;
 			return (x);
+		}
+
+		size_type	height(Node *node) {
+			if (node == _null_node)
+				return (0);
+			else {
+				size_type	left_depth = height(node->_left);
+				size_type	right_depth = height(node->_right);
+				if (left_depth > right_depth)
+					return (left_depth + 1);
+				else
+					return (right_depth + 1);
+			}
+		}
+
+		size_type nodeCount(Node *node) {
+			if (node == _null_node)
+				return (0);
+			else
+				return (nodeCount(node->_left) + nodeCount(node->_right) + 1);
 		}
 	};
 
