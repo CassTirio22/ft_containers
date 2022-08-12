@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/12 15:25:49 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/12 17:49:37 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,13 +115,16 @@ namespace ft {
 		}
 
 		/*-----  -----*/
+		/*-----  -----*/
+		/*-----  -----*/
+		/*-----  -----*/
 		/*----- Insert -----*/
 
 		Node	*insert(Node *node, value_type val) {
 			if (_root == _null_node)
-				return (_root = newNode(val, rbTreeColor._black));
+				return (_root = newNode(val, rbTreeColor::_black));
 			else if (node == _null_node)
-				return (node = newNode(val, rbTreeColor._red));
+				return (node = newNode(val, rbTreeColor::_red));
 			else if (_cmp(val._first, node->_data._first)) {
 				node->_left = insert(node->_left, val);
 				node->_left->_parent = node;
@@ -135,6 +138,30 @@ namespace ft {
 				if (node != _root)
 					if (!node->_color && !node->_right->_color)
 						_f = true;
+			}
+			return (balanceTree(node));
+		}
+
+		/*----- Balance -----*/
+
+		Node	*balanceTree(Node *node) {
+			if (_f) {
+				if (node->_parent->_color == rbTreeColor::_red && node == node->_parent->_left && node->_parent->_parent->_right->_color == rbTreeColor::_red) {
+					node->_parent->_color = rbTreeColor::_black;
+					node->_parent->_parent->_right->_color = rbTreeColor::_black;
+					if (node->_parent->_parent->_parent) {
+						node->_parent->_parent->_color = rbTreeColor::_red;
+						balanceTree(node->_parent->_parent);
+					}
+				}
+				else if (node->_parent->_color == rbTreeColor::_red && node == node->_parent->_right && node->_parent->_parent->_left->_color == rbTreeColor::_red) {
+					node->_parent->_color = rbTreeColor::_black;
+					node->_parent->_parent->_right->_color = rbTreeColor::_black;
+					if (node->_parent->_parent->_parent) {
+						node->_parent->_parent->_color = rbTreeColor::_red;
+						balanceTree(node->_parent->_parent);
+					}
+				}
 			}
 		}
 
