@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/10 17:53:02 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/12 15:25:49 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,8 +78,43 @@ namespace ft {
 			_node_alloc.deallocate(_null_node, 1);
 		}
 
-		/*-----  -----*/
+		/*----- Rotate -----*/
 
+		void	rotateLeft(Node *node) {
+			Node	*tmp_a = node;
+			Node	*tmp_b = node->_right->_left;
+
+			node = node->_right;
+			node->_left = tmp_a;
+			tmp_a->_right = tmp_b;
+			node->_parent = tmp_a->_parent;
+			tmp_a->_parent = node;
+			if (node->_parent)
+				node->_parent->_right = node
+			else
+				_root = node;
+			if (tmp_b != _null_node)
+				tmp_b->_parent = tmp_a;
+		}
+
+		void	rotateRight(Node *node) {
+			Node	*tmp_a = node;
+			Node	*tmp_b = node->_left->_right;
+
+			node = node->_left;
+			node->_right = tmp_a;
+			tmp_a->_left = tmp_b;
+			node->_parent = tmp_a->_parent;
+			tmp_a->_parent = node;
+			if (node->_parent)
+				node->_parent->_left = node;
+			else
+				_root = node;
+			if (tmp_b != _null_node)
+				tmp_b->_parent = tmp_a;
+		}
+
+		/*-----  -----*/
 		/*----- Insert -----*/
 
 		Node	*insert(Node *node, value_type val) {
@@ -89,14 +124,14 @@ namespace ft {
 				return (node = newNode(val, rbTreeColor._red));
 			else if (_cmp(val._first, node->_data._first)) {
 				node->_left = insert(node->_left, val);
-				node->left->_parent = node;
+				node->_left->_parent = node;
 				if (node != _root)
 					if (!node->_color && !node->_left->_color)
 						_f = true;
 			}
 			else if (_cmp(node->_data._first, val._first)) {
 				node->_right = insert(node->_right, val);
-				node->right->_parent = node;
+				node->_right->_parent = node;
 				if (node != _root)
 					if (!node->_color && !node->_right->_color)
 						_f = true;
@@ -132,8 +167,8 @@ namespace ft {
 				return (tmp);
 			}
 			tmp = node->_left;
-			while (tmp->_left != _null_node)
-				tmp = tmp->_left;
+			while (tmp->_right != _null_node)
+				tmp = tmp->_right;
 			return (tmp);
 		}
 
@@ -148,7 +183,7 @@ namespace ft {
 		}
 
 		void	aff_node(node_type *node) const {
-			std::string	color;
+			std::string	ßcolor;
 			node->_color ? color = "red" : color = "black";
 			std::cout << node->_data._first << " | " << node->_data._second << " | " << color << std::endl;
 		}
