@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/15 18:32:46 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/15 19:16:06 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ namespace ft {
 		Node	*getUncle(Node *node) const {
 			if (node->_parent == _root || node == _root || node == NULL || node == _null_node)
 				return (NULL);
-			if (node == node->_parent->_left)
+			if (node->_parent == node->_parent->_parent->_left)
 				return (node->_parent->_parent->_right);
 			return (node->_parent->_parent->_left);
 		}
@@ -139,7 +139,7 @@ namespace ft {
 		Node	*insert(Node *node, value_type val) {
 			Node	*tmp = _root;
 			if (_root == _null_node)
-				return (newNode(val, NULL, BLACK));
+				return (_root = newNode(val, NULL, BLACK));
 			while (true) {
 				if (_cmp(val._first, tmp->_data._first)) {
 					if (tmp->_left == _null_node) {
@@ -165,9 +165,10 @@ namespace ft {
 		/*----- Balance -----*/
 
 		Node	*balanceTree(Node *node) {
+			if (node == _root || node == _null_node || node == NULL)
+				return (node);
 			if (node->_parent->_color == BLACK)
 				return (node);
-
 			Node	*uncle = getUncle(node);
 			if (uncle && uncle->_color == RED) {
 				uncle->_color = BLACK;
@@ -245,7 +246,7 @@ namespace ft {
 
 		void	aff_node(Node *node) const {
 			std::string	color;
-			node->_color ? color = "red" : color = "black";
+			node->_color ? color = "black" : color = "red";
 			std::cout << node->_data._first << " | " << node->_data._second << " | " << color << std::endl;
 		}
 

@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:15:21 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/15 16:15:23 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/15 19:16:18 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,8 @@ int main(void){
 	rbt.insert(rbt.getRoot(), ft::make_pair(5, 65));
 	rbt.insert(rbt.getRoot(), ft::make_pair(25, 65));
 	rbt.insert(rbt.getRoot(), ft::make_pair(17, 65));
+
+	// rbt.aff_node(rbt.getRoot());
+	rbt.aff_tree(rbt.getRoot(), 0);
 	return (0);
 }
