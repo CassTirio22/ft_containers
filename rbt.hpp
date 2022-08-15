@@ -6,20 +6,22 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/12 17:49:37 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/15 18:32:46 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef RBT_HPP
 # define RBT_HPP
 
+# define BLACK true
+# define RED false
+
 # include "pair.hpp"
+# include <iostream>
 # include <functional>
 # include <memory>
 
 namespace ft {
-
-	enum rbTreeColor { _red = false, _black = true };
 
 	template <class Key, class T>
 	struct Node {
@@ -30,18 +32,19 @@ namespace ft {
 		bool					_color;
 	};
 
-	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<Key, T> >, class Node = Node<const Key, T> >
+	template <class Key, class T, class Compare = std::less<Key> >
 	class rbTree {
 
 		public:
-			typedef				Key										key_type;
-			typedef				T										mapped_type;
-			typedef				Compare									key_compare;
-			typedef	typename	ft::pair<Key, T>						value_type;
-			typedef				Alloc									allocator_type;
-			typedef	typename	std::allocator<ft::Node<const Key, T> >	node_allocator_type;
-			typedef	typename	Alloc::size_type						size_type;
-			typedef	typename	Alloc::difference_type					difference_type;
+			typedef	Key										key_type;
+			typedef	T										mapped_type;
+			typedef	ft::Node<const Key, T>					Node;
+			typedef	ft::pair<const Key, T>						value_type;
+			typedef	std::allocator<ft::pair<const Key, T> >	allocator_type;
+			typedef	std::allocator<ft::Node<const Key, T> >	node_allocator_type;
+			typedef	Compare									key_compare;
+			typedef	typename	allocator_type::size_type						size_type;
+			typedef	typename	allocator_type::difference_type					difference_type;
 
 		private:
 			Node				*_root;
@@ -61,13 +64,13 @@ namespace ft {
 
 		/*----- Constructors -----*/
 
-		rbTree(key_compare &cmp = key_compare(), allocator_type &alloc = allocator_type()) : _cmp(cmp), _alloc(alloc), _node_alloc(node_allocator_type()), _f(false), _ll(false), _rr(false), _rl(false), _lr(false) {
+		rbTree(const key_compare &cmp = key_compare(), const allocator_type &alloc = allocator_type()) : _cmp(cmp), _alloc(alloc), _node_alloc(node_allocator_type()), _f(false), _ll(false), _rr(false), _rl(false), _lr(false) {
 			_null_node = _node_alloc.allocate(1);
-			_alloc.construct(&_null_node, value_type());
+			_alloc.construct(&_null_node->_data, value_type());
 			_null_node->_parent = NULL;
 			_null_node->_left = NULL;
 			_null_node->_right = NULL;
-			_null_node->_color = rbTreeColor._black;
+			_null_node->_color = BLACK;
 			_root = _null_node;
 		}
 
@@ -78,9 +81,21 @@ namespace ft {
 			_node_alloc.deallocate(_null_node, 1);
 		}
 
+		/*----- Getter -----*/
+
+		Node	*getUncle(Node *node) const {
+			if (node->_parent == _root || node == _root || node == NULL || node == _null_node)
+				return (NULL);
+			if (node == node->_parent->_left)
+				return (node->_parent->_parent->_right);
+			return (node->_parent->_parent->_left);
+		}
+
+		Node	*getRoot(void) const { return (_root); }
+
 		/*----- Rotate -----*/
 
-		void	rotateLeft(Node *node) {
+		Node	*rotateLeft(Node *node) {
 			Node	*tmp_a = node;
 			Node	*tmp_b = node->_right->_left;
 
@@ -90,14 +105,15 @@ namespace ft {
 			node->_parent = tmp_a->_parent;
 			tmp_a->_parent = node;
 			if (node->_parent)
-				node->_parent->_right = node
+				node->_parent->_right = node;
 			else
 				_root = node;
 			if (tmp_b != _null_node)
 				tmp_b->_parent = tmp_a;
+			return (node);
 		}
 
-		void	rotateRight(Node *node) {
+		Node	*rotateRight(Node *node) {
 			Node	*tmp_a = node;
 			Node	*tmp_b = node->_left->_right;
 
@@ -112,57 +128,75 @@ namespace ft {
 				_root = node;
 			if (tmp_b != _null_node)
 				tmp_b->_parent = tmp_a;
+			return (node);
 		}
 
-		/*-----  -----*/
 		/*-----  -----*/
 		/*-----  -----*/
 		/*-----  -----*/
 		/*----- Insert -----*/
 
 		Node	*insert(Node *node, value_type val) {
+			Node	*tmp = _root;
 			if (_root == _null_node)
-				return (_root = newNode(val, rbTreeColor::_black));
-			else if (node == _null_node)
-				return (node = newNode(val, rbTreeColor::_red));
-			else if (_cmp(val._first, node->_data._first)) {
-				node->_left = insert(node->_left, val);
-				node->_left->_parent = node;
-				if (node != _root)
-					if (!node->_color && !node->_left->_color)
-						_f = true;
+				return (newNode(val, NULL, BLACK));
+			while (true) {
+				if (_cmp(val._first, tmp->_data._first)) {
+					if (tmp->_left == _null_node) {
+						tmp->_left = newNode(val, tmp, RED);
+						return (balanceTree(tmp->_left));
+					}
+					else
+						tmp = tmp->_left;
+				}
+				else if (_cmp(tmp->_data._first, val._first)) {
+					if (tmp->_right == _null_node) {
+						tmp->_right = newNode(val, tmp, RED);
+						return (balanceTree(tmp->_right));
+					}
+					else
+						tmp = tmp->_right;
+				}
+				else
+					return (tmp);
 			}
-			else if (_cmp(node->_data._first, val._first)) {
-				node->_right = insert(node->_right, val);
-				node->_right->_parent = node;
-				if (node != _root)
-					if (!node->_color && !node->_right->_color)
-						_f = true;
-			}
-			return (balanceTree(node));
 		}
 
 		/*----- Balance -----*/
 
 		Node	*balanceTree(Node *node) {
-			if (_f) {
-				if (node->_parent->_color == rbTreeColor::_red && node == node->_parent->_left && node->_parent->_parent->_right->_color == rbTreeColor::_red) {
-					node->_parent->_color = rbTreeColor::_black;
-					node->_parent->_parent->_right->_color = rbTreeColor::_black;
-					if (node->_parent->_parent->_parent) {
-						node->_parent->_parent->_color = rbTreeColor::_red;
-						balanceTree(node->_parent->_parent);
-					}
+			if (node->_parent->_color == BLACK)
+				return (node);
+
+			Node	*uncle = getUncle(node);
+			if (uncle && uncle->_color == RED) {
+				uncle->_color = BLACK;
+				node->_parent->_color = BLACK;
+				if (node->_parent->_parent != _root)
+					node->_parent->_parent->_color = RED;
+				balanceTree(node->_parent->_parent);
+			}
+			else {
+				Node	*parent = node->_parent;
+				Node	*grandParent = parent->_parent;
+				if (!ThreeNodesMakeLine(node, parent, grandParent)) {
+					if (parent->_left == node)
+						rotateRight(node->_parent);
+					else
+						rotateLeft(node->_parent);
 				}
-				else if (node->_parent->_color == rbTreeColor::_red && node == node->_parent->_right && node->_parent->_parent->_left->_color == rbTreeColor::_red) {
-					node->_parent->_color = rbTreeColor::_black;
-					node->_parent->_parent->_right->_color = rbTreeColor::_black;
-					if (node->_parent->_parent->_parent) {
-						node->_parent->_parent->_color = rbTreeColor::_red;
-						balanceTree(node->_parent->_parent);
-					}
+				if (grandParent->_left == parent || grandParent->_left == node) {
+					grandParent->_color = RED;
+					grandParent->_left->_color = BLACK;
+					rotateRight(grandParent);
+				}
+				else {
+					grandParent->_color = RED;
+					grandParent->_right->_color = BLACK;
+					rotateLeft(grandParent);
 				}
 			}
+			return (node);
 		}
 
 		/*----- Utils -----*/
@@ -199,23 +233,23 @@ namespace ft {
 			return (tmp);
 		}
 
-		Node *newNode(value_type val, bool color) {
+		Node *newNode(value_type val, Node *parent, bool color) {
 			Node	*ret = _node_alloc.allocate(1);
-			_node_alloc.construct(&ret->_data, val);
-			ret->_parent = NULL;
+			_alloc.construct(&ret->_data, val);
+			ret->_parent = parent;
 			ret->_left = _null_node;
 			ret->_right = _null_node;
 			ret->_color = color;
 			return (ret);
 		}
 
-		void	aff_node(node_type *node) const {
-			std::string	ßcolor;
+		void	aff_node(Node *node) const {
+			std::string	color;
 			node->_color ? color = "red" : color = "black";
 			std::cout << node->_data._first << " | " << node->_data._second << " | " << color << std::endl;
 		}
 
-		void	aff_tree(node_type *node, int space) const {
+		void	aff_tree(Node *node, int space) const {
 			int i;
 			if(node != _null_node) {
 				space = space + 10;
@@ -254,12 +288,19 @@ namespace ft {
 			}
 		}
 
-		size_type nodeCount(Node *node) {
+		size_type	nodeCount(Node *node) {
 			if (node == _null_node)
 				return (0);
 			else
 				return (nodeCount(node->_left) + nodeCount(node->_right) + 1);
 		}
+
+		bool	ThreeNodesMakeLine(Node *node1, Node *node2, Node *node3) {
+			if ((node1 == node2->_left && node2 == node3->_left) || (node1 == node2->_right && node2 == node3->_right))
+				return (true);
+			return (false);
+		}
+
 	};
 
 }
