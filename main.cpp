@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:15:21 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/15 19:16:18 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/16 21:01:10 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,20 @@
 int main(void){
 	ft::rbTree<const int, char>	rbt;
 
-	rbt.insert(rbt.getRoot(), ft::make_pair(50, 65));
-	rbt.insert(rbt.getRoot(), ft::make_pair(55, 65));
-	rbt.insert(rbt.getRoot(), ft::make_pair(35, 65));
-	rbt.insert(rbt.getRoot(), ft::make_pair(40, 65));
-	rbt.insert(rbt.getRoot(), ft::make_pair(20, 65));
-	rbt.insert(rbt.getRoot(), ft::make_pair(10, 65));
-	rbt.insert(rbt.getRoot(), ft::make_pair(5, 65));
-	rbt.insert(rbt.getRoot(), ft::make_pair(25, 65));
-	rbt.insert(rbt.getRoot(), ft::make_pair(17, 65));
+	rbt.insert(rbt.getRoot(), ft::make_pair(50, 0));
+	rbt.insert(rbt.getRoot(), ft::make_pair(55, 2));
+	rbt.insert(rbt.getRoot(), ft::make_pair(35, 3));
+	rbt.insert(rbt.getRoot(), ft::make_pair(40, 4));
+	rbt.insert(rbt.getRoot(), ft::make_pair(20, 4));
+	rbt.insert(rbt.getRoot(), ft::make_pair(10, 4));
+	rbt.insert(rbt.getRoot(), ft::make_pair(5, 4));
+	rbt.insert(rbt.getRoot(), ft::make_pair(25, 4));
+	rbt.insert(rbt.getRoot(), ft::make_pair(17, 4));
+	rbt.insert(rbt.getRoot(), ft::make_pair(40, 4));
+	rbt.deleteNode(ft::make_pair(25, 4));
 
 	// rbt.aff_node(rbt.getRoot());
+	std::cout << "------------------------" << std::endl;
 	rbt.aff_tree(rbt.getRoot(), 0);
 	return (0);
 }

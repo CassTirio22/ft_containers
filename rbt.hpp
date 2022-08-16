@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/15 19:16:06 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/16 21:01:03 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ namespace ft {
 		Node					*_right;
 		Node					*_parent;
 		bool					_color;
+		bool					_db;
 	};
 
 	template <class Key, class T, class Compare = std::less<Key> >
@@ -71,6 +72,7 @@ namespace ft {
 			_null_node->_left = NULL;
 			_null_node->_right = NULL;
 			_null_node->_color = BLACK;
+			_null_node->_db = false;
 			_root = _null_node;
 		}
 
@@ -83,6 +85,8 @@ namespace ft {
 
 		/*----- Getter -----*/
 
+		Node	*getRoot(void) const { return (_root); }
+
 		Node	*getUncle(Node *node) const {
 			if (node->_parent == _root || node == _root || node == NULL || node == _null_node)
 				return (NULL);
@@ -91,7 +95,23 @@ namespace ft {
 			return (node->_parent->_parent->_left);
 		}
 
-		Node	*getRoot(void) const { return (_root); }
+		Node	*getSibling(Node *node) const {
+			if (node == node->_parent->_right)
+				return (node->_parent->_left);
+			return (node->_parent->_right);
+		}
+
+		Node	*getFarSiblingChild(Node *node) {
+			if (node == node->_parent->_right)
+				return (node->_parent->_left->_left);
+			return (node->_parent->_right->_right);
+		}
+
+		Node	*getNearSiblingChild(Node *node) {
+			if (node == node->_parent->_right)
+				return (node->_parent->_left->_right);
+			return (node->_parent->_right->_left);
+		}
 
 		/*----- Rotate -----*/
 
@@ -133,7 +153,6 @@ namespace ft {
 
 		/*-----  -----*/
 		/*-----  -----*/
-		/*-----  -----*/
 		/*----- Insert -----*/
 
 		Node	*insert(Node *node, value_type val) {
@@ -160,6 +179,48 @@ namespace ft {
 				else
 					return (tmp);
 			}
+		}
+
+		/*----- Delete -----*/
+
+		Node	*deleteNode(value_type val) {
+			Node	*db = findNode(val);
+			if (db->_left == _null_node && db->_right == _null_node) {
+				if (db->_color == RED || db == _root) {
+					_alloc.destroy(&db->_data);
+					_node_alloc.deallocate(db, 1);
+				}
+				else {
+					db->_db = true;
+					balanceDelTree(db);
+				}
+			}
+			else {
+				Node	*tmp = db->_left == _null_node ? minimum(db->_right) : maximum(db->_left);
+				if (db->_left != _null_node || db->_right != _null_node) {
+					if (tmp->_left != _null_node) {
+						tmp->_color = BLACK;
+						tmp->_left->_parent = tmp->_parent;
+						tmp == tmp->_parent->_left ? tmp->_parent->_left = tmp->_left : tmp->_parent->_right = tmp->_left;
+					}
+					else {
+						tmp->_color = BLACK;
+						tmp->_right->_parent = tmp->_parent;
+						tmp == tmp->_parent->_left ? tmp->_parent->_left = tmp->_right : tmp->_parent->_right = tmp->_right;
+					}
+					copyNode(db, tmp);
+				}
+				else {
+					if (tmp->_color == RED)
+						copyNode(db, tmp);
+					else {
+						tmp->_db = true;
+						copyNode(db, tmp);
+						balanceDelTree(tmp);
+					}
+				}
+			}
+			return (db);
 		}
 
 		/*----- Balance -----*/
@@ -198,6 +259,55 @@ namespace ft {
 				}
 			}
 			return (node);
+		}
+
+		Node	*balanceDelTree(Node *db) {
+			if (db == _root)
+				return (db);		// Maybe swap color to black
+			Node	*sibling = getSibling(db);
+			if (sibling->_color == RED) {
+				sibling->_color = db->_parent;
+				db->_parent->_color = RED;
+				db == db->_parent->_left ? rotateLeft(db->_parent) : rotateRight(db->_parent);
+				balanceDelTree(db);
+			}
+			else {
+				Node	*farSiblingChild = getFarSiblingChild(db);
+				if (farSiblingChild->_color == RED) {
+					sibling->_color = db->_parent;
+					db->_parent->_color = BLACK;
+					db == db->_parent->_left ? rotateLeft(db->_parent) : rotateRight(db->_parent);
+					if (db->_db) {
+						db == db->_parent->_left ? db->_parent->_left = _null_node : db->_parent->_right = _null_node;
+						_alloc.destroy(&db->_data);
+						_node_alloc.deallocate(db, 1);
+					}
+					farSiblingChild->_color = BLACK;
+				}
+				else {
+					Node	*nearSiblingChild = getNearSiblingChild(db);
+					if (nearSiblingChild == RED) {
+						sibling->_color = RED;
+						nearSiblingChild->_color = BLACK;
+						db == db->_parent->_left ? rotateRight(sibling) : rotateLeft(sibling);
+						balanceDelTree(db);
+					}
+					else {
+						Node	*tmpParent = db->_parent;
+						if (db->_db) {
+							db == db->_parent->_left ? db->_parent->_left = _null_node : db->_parent->_right = _null_node;
+							_alloc.destroy(&db->_data);
+							_node_alloc.deallocate(db, 1);
+						}
+						sibling->_color = RED;
+						if (tmpParent->_color == BLACK)
+							balanceDelTree(tmpParent);
+						else
+							tmpParent->_color = BLACK;
+					}
+				}
+			}
+			return (db);
 		}
 
 		/*----- Utils -----*/
@@ -241,7 +351,27 @@ namespace ft {
 			ret->_left = _null_node;
 			ret->_right = _null_node;
 			ret->_color = color;
+			ret->_db = false;
 			return (ret);
+		}
+
+		void	copyNode(Node *a, Node *b) {
+			Node	*tmpParent = b->_parent;
+			Node	*tmpLeft = b->_left;
+			Node	*tmpRight = b->_right;
+
+			if (a != _root)
+				a->_parent->_left == a ? a->_parent->_left = b : a->_parent->_right = b;
+			else
+				_root = b;
+			b->_parent = a->_parent;
+			b->_left = a->_left;
+			b->_right = a->_right;
+			b->_left->_parent = b;
+			b->_right->_parent = b;
+			b->_color = a->_color;
+			b->_db = a->_db;
+			tmpParent->_right == b ? tmpParent->_right = tmpLeft : tmpParent->_left = tmpRight;
 		}
 
 		void	aff_node(Node *node) const {
@@ -287,6 +417,24 @@ namespace ft {
 				else
 					return (right_depth + 1);
 			}
+		}
+
+		Node	*findNode(value_type val) {
+			Node	*toFind = _root;
+
+			while (_cmp(val._first, toFind->_data._first) || _cmp(toFind->_data._first, val._first)) {
+				if (_cmp(val._first, toFind->_data._first)) {
+					if (toFind->_left == _null_node)
+						return (toFind);
+					toFind = toFind->_left;
+				}
+				else if (_cmp(toFind->_data._first, val._first)) {
+					if (toFind->_right == _null_node)
+						return (toFind);
+					toFind = toFind->_right;
+				}
+			}
+			return (toFind);
 		}
 
 		size_type	nodeCount(Node *node) {
