@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:15:21 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/16 21:01:10 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/17 00:38:02 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,9 @@ int main(void){
 	rbt.insert(rbt.getRoot(), ft::make_pair(25, 4));
 	rbt.insert(rbt.getRoot(), ft::make_pair(17, 4));
 	rbt.insert(rbt.getRoot(), ft::make_pair(40, 4));
-	rbt.deleteNode(ft::make_pair(25, 4));
 
+	rbt.deleteNode(ft::make_pair(25, 4));
+	
 	// rbt.aff_node(rbt.getRoot());
 	std::cout << "------------------------" << std::endl;
 	rbt.aff_tree(rbt.getRoot(), 0);

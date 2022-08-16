@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/16 21:01:03 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/17 00:47:05 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,10 +186,8 @@ namespace ft {
 		Node	*deleteNode(value_type val) {
 			Node	*db = findNode(val);
 			if (db->_left == _null_node && db->_right == _null_node) {
-				if (db->_color == RED || db == _root) {
-					_alloc.destroy(&db->_data);
-					_node_alloc.deallocate(db, 1);
-				}
+				if (db->_color == RED || db == _root)
+					destroyNode(db);
 				else {
 					db->_db = true;
 					balanceDelTree(db);
@@ -221,6 +219,17 @@ namespace ft {
 				}
 			}
 			return (db);
+		}
+
+		void	destroyNode(Node *node) {
+			if (node != _root) {
+				if (node == node->_parent->_left)
+					node->_parent->_left = _null_node;
+				else
+					node->_parent->_right = _null_node;
+			}
+			_alloc.destroy(&node->_data);
+			_node_alloc.deallocate(node, 1);
 		}
 
 		/*----- Balance -----*/
@@ -286,7 +295,7 @@ namespace ft {
 				}
 				else {
 					Node	*nearSiblingChild = getNearSiblingChild(db);
-					if (nearSiblingChild == RED) {
+					if (nearSiblingChild->_color == RED) {
 						sibling->_color = RED;
 						nearSiblingChild->_color = BLACK;
 						db == db->_parent->_left ? rotateRight(sibling) : rotateLeft(sibling);
