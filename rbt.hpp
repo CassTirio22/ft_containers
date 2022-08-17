@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/17 00:47:05 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/17 16:30:57 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,9 @@ namespace ft {
 			}
 			else {
 				Node	*tmp = db->_left == _null_node ? minimum(db->_right) : maximum(db->_left);
-				if (db->_left != _null_node || db->_right != _null_node) {
+				aff_node(db);
+				aff_node(tmp);
+				if (tmp->_left != _null_node || tmp->_right != _null_node) {
 					if (tmp->_left != _null_node) {
 						tmp->_color = BLACK;
 						tmp->_left->_parent = tmp->_parent;
@@ -228,6 +230,8 @@ namespace ft {
 				else
 					node->_parent->_right = _null_node;
 			}
+			else
+				_root = _null_node;
 			_alloc.destroy(&node->_data);
 			_node_alloc.deallocate(node, 1);
 		}
@@ -305,8 +309,7 @@ namespace ft {
 						Node	*tmpParent = db->_parent;
 						if (db->_db) {
 							db == db->_parent->_left ? db->_parent->_left = _null_node : db->_parent->_right = _null_node;
-							_alloc.destroy(&db->_data);
-							_node_alloc.deallocate(db, 1);
+							destroyNode(db);
 						}
 						sibling->_color = RED;
 						if (tmpParent->_color == BLACK)
@@ -404,13 +407,13 @@ namespace ft {
 		}
 
 		Node	*minimum(Node* x) {
-			while (x->_left)
+			while (x->_left != _null_node)
 				x = x->_left;
 			return (x);
 		}
 
 		Node*	maximum(Node* x) {
-			while (x->_right)
+			while (x->_right != _null_node)
 				x = x->_right;
 			return (x);
 		}
