@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/17 16:30:57 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/17 18:28:07 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ namespace ft {
 		/*----- Getter -----*/
 
 		Node	*getRoot(void) const { return (_root); }
+		Node	*getNullNode(void) const { return (_null_node); }
 
 		Node	*getUncle(Node *node) const {
 			if (node->_parent == _root || node == _root || node == NULL || node == _null_node)
@@ -151,8 +152,6 @@ namespace ft {
 			return (node);
 		}
 
-		/*-----  -----*/
-		/*-----  -----*/
 		/*----- Insert -----*/
 
 		Node	*insert(Node *node, value_type val) {

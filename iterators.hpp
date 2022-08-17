@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/24 16:52:29 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/17 18:42:29 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -372,6 +372,119 @@ namespace ft {
 
 	template <class Iterator>
 	ReverseIterator<Iterator> operator+(typename ReverseIterator<Iterator>::difference_type n, const ReverseIterator<Iterator> &x){ return (ReverseIterator<Iterator>(x.base() - n)); }
+
+
+	/*---------- RBT ITERATORS ----------*/
+
+	template<class T, class Node>
+	class RbtIterator {
+	public:
+
+		typedef	T			value_type;
+		typedef	ptrdiff_t	difference_type;
+
+	private:
+
+		Node	*_node;
+		Node	*_null_node;
+
+	public:
+
+		/*-----  -----*/
+		/*-----  -----*/
+		/*-----  -----*/
+
+		/*----- Const operator -----*/
+
+		operator RbtIterator<const T, Node>() const { return (_node); }
+
+		/*----- Constructors -----*/
+
+		RbtIterator(void) : _node(NULL), _null_node(NULL) {}
+		RbtIterator(Node *node, Node *null_node) : _node(node), _null_node(null_node) {}
+		RbtIterator(const RbtIterator &it) : _node(it.getNode()), _null_node(it.getNullNode()) {}
+
+		/*----- Assign operator -----*/
+
+		RbtIterator	&operator=(const RbtIterator &it) {
+			_node = it.getNode();
+			return (*this);
+		}
+
+		/*----- Getters -----*/
+
+		Node	*getNode(void) const { return (_node); }
+		Node	*getNullNode(void) const {return (_null_node); }
+
+		/*----- Access operator -----*/
+
+		value_type	&operator*(void) const { return (_node->_data); }
+
+		value_type	*operator->(void) const { return (&_node->_data); }
+
+		/*----- Increment operators -----*/
+
+		RbtIterator&	operator++(void) {
+			_node = ft_next(_node);
+			return (*this);
+		}
+
+		RbtIterator	operator++(int n) {
+			static_cast<void>(n);
+			Node	*tmp = _node;
+			_node = ft_next(_node);
+			return (RbtIterator(tmp, _null_node));
+		}
+
+		/*----- Decrement operators -----*/
+
+		RbtIterator&	operator--(void) {
+			_node = ft_prev(_node);
+			return (*this);
+		}
+
+		RbtIterator	operator--(int n) {
+			static_cast<void>(n);
+			Node	*tmp = _node;
+			_node = ft_prev(_node);
+			return (RbtIterator(tmp, _null_node));
+		}
+
+		/*----- Utils -----*/
+
+		Node	*ft_next(Node *node) {
+			Node	*tmp;
+
+			if (node->_right == _null_node) {
+				tmp = node;
+				while (tmp->_parent != _null_node && tmp == tmp->_parent->_right)
+					tmp = tmp->_parent;
+				tmp = tmp->_parent;
+				return (tmp);
+			}
+			tmp = node->_right;
+			while (tmp->_left != _null_node)
+				tmp = tmp->_left;
+			return (tmp);
+		}
+
+		Node	*ft_prev(Node *node) {
+			Node	*tmp;
+
+			if (node->_left == _null_node) {
+				tmp = node;
+				while (tmp->_parent != _null_node && tmp == tmp->_parent->_left)
+					tmp = tmp->_parent;
+				tmp = tmp->_parent;
+				return (tmp);
+			}
+			tmp = node->_left;
+			while (tmp->_right != _null_node)
+				tmp = tmp->_right;
+			return (tmp);
+		}
+	};
+
 
 };
 
