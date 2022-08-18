@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/17 18:42:29 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/18 15:34:12 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -377,7 +377,7 @@ namespace ft {
 	/*---------- RBT ITERATORS ----------*/
 
 	template<class T, class Node>
-	class RbtIterator {
+	class MapIterator {
 	public:
 
 		typedef	T			value_type;
@@ -396,17 +396,17 @@ namespace ft {
 
 		/*----- Const operator -----*/
 
-		operator RbtIterator<const T, Node>() const { return (_node); }
+		operator MapIterator<const T, Node>() const { return (_node); }
 
 		/*----- Constructors -----*/
 
-		RbtIterator(void) : _node(NULL), _null_node(NULL) {}
-		RbtIterator(Node *node, Node *null_node) : _node(node), _null_node(null_node) {}
-		RbtIterator(const RbtIterator &it) : _node(it.getNode()), _null_node(it.getNullNode()) {}
+		MapIterator(void) : _node(NULL), _null_node(NULL) {}
+		MapIterator(Node *node, Node *null_node) : _node(node), _null_node(null_node) {}
+		MapIterator(const MapIterator &it) : _node(it.getNode()), _null_node(it.getNullNode()) {}
 
 		/*----- Assign operator -----*/
 
-		RbtIterator	&operator=(const RbtIterator &it) {
+		MapIterator	&operator=(const MapIterator &it) {
 			_node = it.getNode();
 			return (*this);
 		}
@@ -424,30 +424,30 @@ namespace ft {
 
 		/*----- Increment operators -----*/
 
-		RbtIterator&	operator++(void) {
+		MapIterator&	operator++(void) {
 			_node = ft_next(_node);
 			return (*this);
 		}
 
-		RbtIterator	operator++(int n) {
+		MapIterator	operator++(int n) {
 			static_cast<void>(n);
 			Node	*tmp = _node;
 			_node = ft_next(_node);
-			return (RbtIterator(tmp, _null_node));
+			return (MapIterator(tmp, _null_node));
 		}
 
 		/*----- Decrement operators -----*/
 
-		RbtIterator&	operator--(void) {
+		MapIterator&	operator--(void) {
 			_node = ft_prev(_node);
 			return (*this);
 		}
 
-		RbtIterator	operator--(int n) {
+		MapIterator	operator--(int n) {
 			static_cast<void>(n);
 			Node	*tmp = _node;
 			_node = ft_prev(_node);
-			return (RbtIterator(tmp, _null_node));
+			return (MapIterator(tmp, _null_node));
 		}
 
 		/*----- Utils -----*/

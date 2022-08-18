@@ -6,42 +6,30 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:15:21 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/17 18:43:15 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/18 20:17:25 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <list>
 #include "rbt.hpp"
 #include "iterators.hpp"
+#include "map.hpp"
 
-int main(void){
-	ft::rbTree<const int, char>	rbt;
+int main(void) {
 
-	rbt.insert(rbt.getRoot(), ft::make_pair(50, 0));
-	rbt.insert(rbt.getRoot(), ft::make_pair(55, 2));
-	rbt.insert(rbt.getRoot(), ft::make_pair(35, 3));
-	rbt.insert(rbt.getRoot(), ft::make_pair(40, 4));
-	rbt.insert(rbt.getRoot(), ft::make_pair(20, 4));
-	rbt.insert(rbt.getRoot(), ft::make_pair(10, 4));
-	rbt.insert(rbt.getRoot(), ft::make_pair(5, 4));
-	rbt.insert(rbt.getRoot(), ft::make_pair(25, 4));
-	rbt.insert(rbt.getRoot(), ft::make_pair(17, 4));
-	rbt.insert(rbt.getRoot(), ft::make_pair(40, 4));
+	ft::map<const int, int>	map1, map2;
 
-	ft::RbtIterator<ft::pair<const int, char>, ft::Node<const int, char> > it(rbt.findNode(ft::make_pair(20, 4)), rbt.getNullNode());
+	map1.insert(ft::make_pair(42, 1));
+	map1.insert(ft::make_pair(19, 0));
+	map1.insert(ft::make_pair(88, 0));
+	map1.insert(ft::make_pair(22, 3));
+	map1.insert(ft::make_pair(0, 0));
+	std::cout << map1.insert(ft::make_pair(1000, 2))._second << std::endl;
+	std::cout << map1.insert(ft::make_pair(1000, 2))._second << std::endl;;
 
-	// rbt.deleteNode(ft::make_pair(25, 4));
-	// rbt.deleteNode(ft::make_pair(17, 4));
-	// rbt.deleteNode(ft::make_pair(55, 2));
-	rbt.deleteNode(ft::make_pair(35, 4));
-	std::cout << "------------------------" << std::endl;
+	map1.affRbt();
 
-	// rbt.aff_node(rbt.getRoot());
-	rbt.aff_tree(rbt.getRoot(), 0);
-	std::cout << "------------------------" << std::endl;
-	it++;
-
-	std::cout << (*it)._first << std::endl;
+	map1.swap(map2);
 
 
 	return (0);

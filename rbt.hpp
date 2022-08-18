@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/17 18:28:07 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/18 20:11:12 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,11 +53,6 @@ namespace ft {
 			key_compare			_cmp;
 			allocator_type		_alloc;
 			node_allocator_type	_node_alloc;
-			bool				_f;
-			bool				_ll;
-			bool				_rr;
-			bool				_rl;
-			bool				_lr;
 
 		public:
 
@@ -65,7 +60,7 @@ namespace ft {
 
 		/*----- Constructors -----*/
 
-		rbTree(const key_compare &cmp = key_compare(), const allocator_type &alloc = allocator_type()) : _cmp(cmp), _alloc(alloc), _node_alloc(node_allocator_type()), _f(false), _ll(false), _rr(false), _rl(false), _lr(false) {
+		rbTree(const key_compare &cmp = key_compare(), const allocator_type &alloc = allocator_type()) : _cmp(cmp), _alloc(alloc), _node_alloc(node_allocator_type()) {
 			_null_node = _node_alloc.allocate(1);
 			_alloc.construct(&_null_node->_data, value_type());
 			_null_node->_parent = NULL;
@@ -79,8 +74,18 @@ namespace ft {
 		/*----- Destructor -----*/
 
 		~rbTree(void) {
-			_node_alloc.destroy(_null_node);
+			destroyRbt(_root);
+			_alloc.destroy(&_null_node->_data);
 			_node_alloc.deallocate(_null_node, 1);
+		}
+
+		void	destroyRbt(Node *node) {
+			if (node != _null_node) {
+				destroyRbt(node->_left);
+				destroyRbt(node->_right);
+				_alloc.destroy(&node->_data);
+				_node_alloc.deallocate(node, 1);
+			}
 		}
 
 		/*----- Getter -----*/
@@ -114,6 +119,10 @@ namespace ft {
 			return (node->_parent->_right->_left);
 		}
 
+		/*----- Setter -----*/
+
+		void	setRoot(Node *node) { _root = node; }
+
 		/*----- Rotate -----*/
 
 		Node	*rotateLeft(Node *node) {
@@ -124,11 +133,15 @@ namespace ft {
 			node->_left = tmp_a;
 			tmp_a->_right = tmp_b;
 			node->_parent = tmp_a->_parent;
-			tmp_a->_parent = node;
-			if (node->_parent)
-				node->_parent->_right = node;
+			if (node->_parent) {
+				if (tmp_a == tmp_a->_parent->_right)
+					node->_parent->_right = node;
+				else
+					node->_parent->_left = node;
+			}
 			else
 				_root = node;
+			tmp_a->_parent = node;
 			if (tmp_b != _null_node)
 				tmp_b->_parent = tmp_a;
 			return (node);
@@ -142,11 +155,15 @@ namespace ft {
 			node->_right = tmp_a;
 			tmp_a->_left = tmp_b;
 			node->_parent = tmp_a->_parent;
-			tmp_a->_parent = node;
-			if (node->_parent)
-				node->_parent->_left = node;
+			if (node->_parent) {
+				if (tmp_a == tmp_a->_parent->_right)
+					node->_parent->_right = node;
+				else
+					node->_parent->_left = node;
+			}
 			else
 				_root = node;
+			tmp_a->_parent = node;
 			if (tmp_b != _null_node)
 				tmp_b->_parent = tmp_a;
 			return (node);
@@ -154,10 +171,10 @@ namespace ft {
 
 		/*----- Insert -----*/
 
-		Node	*insert(Node *node, value_type val) {
+		ft::pair<Node *, bool>	insert(Node *node, value_type val) {
 			Node	*tmp = _root;
 			if (_root == _null_node)
-				return (_root = newNode(val, NULL, BLACK));
+				return (ft::make_pair(_root = newNode(val, NULL, BLACK), true));
 			while (true) {
 				if (_cmp(val._first, tmp->_data._first)) {
 					if (tmp->_left == _null_node) {
@@ -176,14 +193,14 @@ namespace ft {
 						tmp = tmp->_right;
 				}
 				else
-					return (tmp);
+					return (ft::make_pair(tmp, false));
 			}
 		}
 
 		/*----- Delete -----*/
 
 		Node	*deleteNode(value_type val) {
-			Node	*db = findNode(val);
+			Node	*db = findNode(val._first);
 			if (db->_left == _null_node && db->_right == _null_node) {
 				if (db->_color == RED || db == _root)
 					destroyNode(db);
@@ -194,8 +211,6 @@ namespace ft {
 			}
 			else {
 				Node	*tmp = db->_left == _null_node ? minimum(db->_right) : maximum(db->_left);
-				aff_node(db);
-				aff_node(tmp);
 				if (tmp->_left != _null_node || tmp->_right != _null_node) {
 					if (tmp->_left != _null_node) {
 						tmp->_color = BLACK;
@@ -237,11 +252,11 @@ namespace ft {
 
 		/*----- Balance -----*/
 
-		Node	*balanceTree(Node *node) {
+		ft::pair<Node *, bool>	balanceTree(Node *node) {
 			if (node == _root || node == _null_node || node == NULL)
-				return (node);
+				return (ft::make_pair(node, true));
 			if (node->_parent->_color == BLACK)
-				return (node);
+				return (ft::make_pair(node, true));
 			Node	*uncle = getUncle(node);
 			if (uncle && uncle->_color == RED) {
 				uncle->_color = BLACK;
@@ -270,7 +285,7 @@ namespace ft {
 					rotateLeft(grandParent);
 				}
 			}
-			return (node);
+			return (ft::make_pair(node, true));
 		}
 
 		Node	*balanceDelTree(Node *db) {
@@ -430,16 +445,16 @@ namespace ft {
 			}
 		}
 
-		Node	*findNode(value_type val) {
+		Node	*findNode(key_type key) {
 			Node	*toFind = _root;
 
-			while (_cmp(val._first, toFind->_data._first) || _cmp(toFind->_data._first, val._first)) {
-				if (_cmp(val._first, toFind->_data._first)) {
+			while (_cmp(key, toFind->_data._first) || _cmp(toFind->_data._first, key)) {
+				if (_cmp(key, toFind->_data._first)) {
 					if (toFind->_left == _null_node)
 						return (toFind);
 					toFind = toFind->_left;
 				}
-				else if (_cmp(toFind->_data._first, val._first)) {
+				else if (_cmp(toFind->_data._first, key)) {
 					if (toFind->_right == _null_node)
 						return (toFind);
 					toFind = toFind->_right;
