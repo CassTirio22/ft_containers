@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/18 20:11:12 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/19 19:17:43 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ namespace ft {
 
 		Node	*getRoot(void) const { return (_root); }
 		Node	*getNullNode(void) const { return (_null_node); }
+		key_compare	getKeyCompare(void) const { return (_cmp); }
 
 		Node	*getUncle(Node *node) const {
 			if (node->_parent == _root || node == _root || node == NULL || node == _null_node)
@@ -474,6 +475,17 @@ namespace ft {
 			if ((node1 == node2->_left && node2 == node3->_left) || (node1 == node2->_right && node2 == node3->_right))
 				return (true);
 			return (false);
+		}
+
+		void	swap(rbTree	&rbt) {
+			Node	*rootTmp = rbt._root;
+			Node	*nullNodeTmp = rbt._null_node;
+
+			rbt._root = _root;
+			rbt._null_node = _null_node;
+			
+			_root = rootTmp;
+			_null_node = nullNodeTmp;
 		}
 
 	};

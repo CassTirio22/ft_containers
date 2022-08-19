@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 21:04:47 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/18 20:18:25 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/19 19:26:55 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ namespace ft {
 		typedef	const value_type&											const_reference;
 		typedef	ft::MapIterator<value_type, ft::Node<const Key, T> >		iterator;
 		typedef	ft::MapIterator<const value_type, ft::Node<const Key, T> >	const_iterator;
+		typedef	ft::ReverseIterator<iterator>								reverse_iterator;
+		typedef	ft::ReverseIterator<const_iterator>							reverse_const_iterator;
 		typedef	ft::rbTree<Key, T>											rbt_type;
 
 	private:
@@ -56,11 +58,24 @@ namespace ft {
 
 		rbt_type	getRbt(void) const { return (_rbt); }
 
-		/*----- Element access -----*/
 
-		T	&operator[](const Key &key) {
-			return (_rbt.findNode(key)->_data._second);
-		}
+		/*----- Iterators -----*/
+
+		iterator	begin(void) {}
+
+		const_iterator	begin(void) const {}
+
+		iterator	end(void) {}
+
+		const_iterator	end(void) const {}
+
+		reverse_iterator	rbegin(void) {}
+
+		const_reverse_iterator	rbegin(void) const {}
+
+		reverse_iterator	rend(void) {}
+
+		const_reverse_iterator	rend(void) const {}
 
 		/*----- Capacity -----*/
 
@@ -74,8 +89,13 @@ namespace ft {
 
 		size_type	max_size(void) { return (_rbt._node_alloc.max_size()); }
 
-		/*----- Modifiers -----*/
+		/*----- Element access -----*/
 
+		T	&operator[](const Key &key) {
+			return ((_rbt.findNode(key))->_data._second);
+		}
+
+		/*----- Modifiers -----*/
 
 		ft::pair<iterator, bool>	insert(const value_type &value) {
 			ft::pair<Node<Key, T> *, bool>	ret = _rbt.insert(_rbt.getRoot(), value);
@@ -85,10 +105,18 @@ namespace ft {
 			return (ft::make_pair<iterator, bool>(it, ret._second));
 		}
 
-		iterator	insert(iterator position, const value_type &val) {}
+		iterator	insert(iterator position, const value_type &val) {
+			std::static_cast<void>(position);
+			return (insert(val)._first);
+		}
 
 		template <class InputIt>
-		void	insert(InputIt first, InputIt last) {}
+		void	insert(InputIt first, InputIt last) {
+			while (first != last) {
+				insert(*first);
+				first++;
+			}
+		}
 
 		void	erase(iterator pos) {}
 
@@ -97,28 +125,50 @@ namespace ft {
 		size_type	erase(const key_type &key) {}
 
 		void	swap(map &x) {
-			// x.affRbt();
-			rbt_type	rbtTmp = x.getRbt();
 			size_type	sizeTmp = x._size;
 
-			// x._rbt = _rbt;
-			// x._size = _size;
-			// _rbt = rbtTmp;
-			// _size = sizeTmp;
+			_rbt.swap(x._rbt);
+			x._size = _size;
+			_size = sizeTmp;
 		}
 
 		void	clear(void) {
 			_rbt.destroyRbt(_rbt.getRoot());
 			_rbt.setRoot(_rbt.getNullNode());
 		}
+
+		/*----- Observers -----*/
+
+		key_compare	key_comp(void) const { return (_rbt.getKeyCompare()); }
+		
+		/*----- Operations -----*/
+
+		iterator	find(const key_type	&k) { return (iterator(_rbt.findNode(k), _rbt.getNullNode())); }
+
+		const_iterator	find(const key_type &k) const { return (const_iterator(_rbt.findNode(k), _rbt.getNullNode())); }
+
+		size_type	count(const key_type &k) const { k == _rbt.findNode(k)->_data._first ? return (1) : return (0); }
+
+		iterator	lower_bound(const key_type &k) const {}
+
+		const_iterator	lower_bound(const key_type &k) const {}
+
+		iterator	upper_bound(const key_type &k) const {}
+
+		const_iterator	upper_bound(const key_type &k) const {}
+
+		ft::pair<const_iterator, const_iterator>	equal_range(const key &k) const {}
+
+		ft::pair<iterator, iterator>	equal_range(const key &k) {}
+
+		/*----- Allocator -----*/
+
+		allocator_type	get_allocator(void) const { return (_alloc); }
+
 		/*----- Utils -----*/
 
 		void	affRbt(void) const { _rbt.aff_tree(_rbt.getRoot(), 0); }
 
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
 	};
 }
 
