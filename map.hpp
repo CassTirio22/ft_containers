@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 21:04:47 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/19 19:26:55 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/24 18:51:06 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ namespace ft {
 		typedef	ft::MapIterator<value_type, ft::Node<const Key, T> >		iterator;
 		typedef	ft::MapIterator<const value_type, ft::Node<const Key, T> >	const_iterator;
 		typedef	ft::ReverseIterator<iterator>								reverse_iterator;
-		typedef	ft::ReverseIterator<const_iterator>							reverse_const_iterator;
+		typedef	ft::ReverseIterator<const_iterator>							const_reverse_iterator;
 		typedef	ft::rbTree<Key, T>											rbt_type;
 
 	private:
@@ -61,13 +61,13 @@ namespace ft {
 
 		/*----- Iterators -----*/
 
-		iterator	begin(void) {}
+		iterator	begin(void) { return(iterator(_rbt.minimum(_rbt.getRoot()), _rbt.getNullNode(), _rbt.getRoot())); }
 
-		const_iterator	begin(void) const {}
+		const_iterator	begin(void) const { return(const_iterator(_rbt.minimum(_rbt.getRoot()), _rbt.getNullNode(), _rbt.getRoot())); }
 
-		iterator	end(void) {}
+		iterator	end(void) { return(iterator(_rbt.getNullNode(), _rbt.getNullNode(), _rbt.getRoot())); }
 
-		const_iterator	end(void) const {}
+		const_iterator	end(void) const { return(const_iterator(_rbt.getNullNode(), _rbt.getNullNode(), _rbt.getRoot()));}
 
 		reverse_iterator	rbegin(void) {}
 
@@ -79,11 +79,7 @@ namespace ft {
 
 		/*----- Capacity -----*/
 
-		bool	empty(void) const {
-			if (_size)
-				return (true);
-			return (false);
-		}
+		bool	empty(void) const { return (!_size); }
 
 		size_type	size(void) const { return (_size); }
 
@@ -98,15 +94,15 @@ namespace ft {
 		/*----- Modifiers -----*/
 
 		ft::pair<iterator, bool>	insert(const value_type &value) {
-			ft::pair<Node<Key, T> *, bool>	ret = _rbt.insert(_rbt.getRoot(), value);
-			iterator	it(ret._first, _rbt.getNullNode());
+			ft::pair<Node<const Key, T> *, bool>	ret = _rbt.insert(_rbt.getRoot(), value);
+			iterator	it(ret._first, _rbt.getNullNode(), _rbt.getRoot());
 			if (ret._second)
 				_size++;
 			return (ft::make_pair<iterator, bool>(it, ret._second));
 		}
 
 		iterator	insert(iterator position, const value_type &val) {
-			std::static_cast<void>(position);
+			static_cast<void>(position);
 			return (insert(val)._first);
 		}
 
@@ -118,11 +114,25 @@ namespace ft {
 			}
 		}
 
-		void	erase(iterator pos) {}
+		void	erase(iterator pos) {
+			erase(pos.getNode()->_data._first);
+		}
 
-		void	erase(iterator first, iterator last) {}
+		void	erase(iterator first, iterator last) {
+			for (; first != last; first++)
+				erase(first);
+		}
 
-		size_type	erase(const key_type &key) {}
+		size_type	erase(const key_type &key) {
+			if (!_size)
+				return (0);
+			Node<const Key, T>	*node = _rbt.findNode(key);
+			if (node->_data._first != key)
+				return (0);
+			_size--;
+			_rbt.deleteNode(node->_data._first);
+			return (1);
+		}
 
 		void	swap(map &x) {
 			size_type	sizeTmp = x._size;
@@ -147,19 +157,23 @@ namespace ft {
 
 		const_iterator	find(const key_type &k) const { return (const_iterator(_rbt.findNode(k), _rbt.getNullNode())); }
 
-		size_type	count(const key_type &k) const { k == _rbt.findNode(k)->_data._first ? return (1) : return (0); }
+		size_type	count(const key_type &k) const {
+			if (k == _rbt.findNode(k)->_data._first)
+				return (1);
+			return (0);
+		}
 
-		iterator	lower_bound(const key_type &k) const {}
+		// iterator	lower_bound(const key_type &k) const {}
 
-		const_iterator	lower_bound(const key_type &k) const {}
+		// const_iterator	lower_bound(const key_type &k) const {}
 
-		iterator	upper_bound(const key_type &k) const {}
+		// iterator	upper_bound(const key_type &k) const {}
 
-		const_iterator	upper_bound(const key_type &k) const {}
+		// const_iterator	upper_bound(const key_type &k) const {}
 
-		ft::pair<const_iterator, const_iterator>	equal_range(const key &k) const {}
+		// ft::pair<const_iterator, const_iterator>	equal_range(const key_type &k) const {}
 
-		ft::pair<iterator, iterator>	equal_range(const key &k) {}
+		// ft::pair<iterator, iterator>	equal_range(const key_type &k) {}
 
 		/*----- Allocator -----*/
 
@@ -169,7 +183,43 @@ namespace ft {
 
 		void	affRbt(void) const { _rbt.aff_tree(_rbt.getRoot(), 0); }
 
+		void	affNode(Node<const Key, T> *node) const { _rbt.aff_node(node); }
+		
+		Node<const Key, T>	*getRoot(void) const { return (_rbt.getRoot()); }
 	};
+
+	/*---------- NON-MEMBER FUNCTIONS ----------*/
+
+	// template<class Key, class T, class Compare, class Alloc>
+	// bool	operator==(const ft::map<Key, T, Compare, Alloc> &lhs, const ft::map<Key, T, Compare, Alloc> &rhs) {
+		
+	// }
+
+	// template<class Key, class T, class Compare, class Alloc>
+	// bool	operator!=(const ft::map<Key, T, Compare, Alloc> &lhs, const ft::map<Key, T, Compare, Alloc> &rhs) {
+		
+	// }
+
+	// template<class Key, class T, class Compare, class Alloc>
+	// bool	operator<(const ft::map<Key, T, Compare, Alloc> &lhs, const ft::map<Key, T, Compare, Alloc> &rhs) {
+		
+	// }
+
+	// template<class Key, class T, class Compare, class Alloc>
+	// bool	operator<=(const ft::map<Key, T, Compare, Alloc> &lhs, const ft::map<Key, T, Compare, Alloc> &rhs) {
+		
+	// }
+
+	// template<class Key, class T, class Compare, class Alloc>
+	// bool	operator>(const ft::map<Key, T, Compare, Alloc> &lhs, const ft::map<Key, T, Compare, Alloc> &rhs) {
+		
+	// }
+
+	// template<class Key, class T, class Compare, class Alloc>
+	// bool	operator>=(const ft::map<Key, T, Compare, Alloc> &lhs, const ft::map<Key, T, Compare, Alloc> &rhs) {
+		
+	// }
+
 }
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/19 19:17:43 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/24 17:42:39 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,9 @@ namespace ft {
 		}
 
 		Node	*getSibling(Node *node) const {
-			if (node == node->_parent->_right)
+			if (node == node->_parent->_right) {
 				return (node->_parent->_left);
+			}
 			return (node->_parent->_right);
 		}
 
@@ -198,61 +199,6 @@ namespace ft {
 			}
 		}
 
-		/*----- Delete -----*/
-
-		Node	*deleteNode(value_type val) {
-			Node	*db = findNode(val._first);
-			if (db->_left == _null_node && db->_right == _null_node) {
-				if (db->_color == RED || db == _root)
-					destroyNode(db);
-				else {
-					db->_db = true;
-					balanceDelTree(db);
-				}
-			}
-			else {
-				Node	*tmp = db->_left == _null_node ? minimum(db->_right) : maximum(db->_left);
-				if (tmp->_left != _null_node || tmp->_right != _null_node) {
-					if (tmp->_left != _null_node) {
-						tmp->_color = BLACK;
-						tmp->_left->_parent = tmp->_parent;
-						tmp == tmp->_parent->_left ? tmp->_parent->_left = tmp->_left : tmp->_parent->_right = tmp->_left;
-					}
-					else {
-						tmp->_color = BLACK;
-						tmp->_right->_parent = tmp->_parent;
-						tmp == tmp->_parent->_left ? tmp->_parent->_left = tmp->_right : tmp->_parent->_right = tmp->_right;
-					}
-					copyNode(db, tmp);
-				}
-				else {
-					if (tmp->_color == RED)
-						copyNode(db, tmp);
-					else {
-						tmp->_db = true;
-						copyNode(db, tmp);
-						balanceDelTree(tmp);
-					}
-				}
-			}
-			return (db);
-		}
-
-		void	destroyNode(Node *node) {
-			if (node != _root) {
-				if (node == node->_parent->_left)
-					node->_parent->_left = _null_node;
-				else
-					node->_parent->_right = _null_node;
-			}
-			else
-				_root = _null_node;
-			_alloc.destroy(&node->_data);
-			_node_alloc.deallocate(node, 1);
-		}
-
-		/*----- Balance -----*/
-
 		ft::pair<Node *, bool>	balanceTree(Node *node) {
 			if (node == _root || node == _null_node || node == NULL)
 				return (ft::make_pair(node, true));
@@ -289,12 +235,63 @@ namespace ft {
 			return (ft::make_pair(node, true));
 		}
 
-		Node	*balanceDelTree(Node *db) {
-			if (db == _root)
-				return (db);		// Maybe swap color to black
+		/*----- Delete -----*/
+
+		void	deleteNode(key_type key) {
+			Node	*node = findNode(key);
+			if (node->_data._first != key)
+				return ;
+			if (node->_left == _null_node && node->_right == _null_node) {
+				if (node->_color == RED || node == _root)
+					destroyNode(node);
+				else {
+					Node	*db = newNode(value_type(), node->_parent, BLACK);
+					db->_db = true;
+					bool parentPos = node == node->_parent->_left ? true : false;
+					destroyNode(node);
+					parentPos ? db->_parent->_left = db : db->_parent->_right = db;
+					balanceDelTree(db);
+				}
+			}
+			else {
+				Node	*tmp = node->_left != _null_node ? maximum(node->_left) : minimum(node->_right);
+				if (tmp->_left != _null_node || tmp->_right != _null_node) {
+					if (tmp->_left != _null_node) {
+						tmp->_left->_color = BLACK;
+						tmp->_left->_parent = tmp->_parent;
+						tmp == tmp->_parent->_left ? tmp->_parent->_left = tmp->_left : tmp->_parent->_right = tmp->_left;
+					}
+					else {
+						tmp->_right->_color = BLACK;
+						tmp->_right->_parent = tmp->_parent;
+						tmp == tmp->_parent->_left ? tmp->_parent->_left = tmp->_right : tmp->_parent->_right = tmp->_right;
+					}
+					copyNode(node, tmp);
+				}
+				else {
+					if (tmp->_color == RED) {
+						tmp == tmp->_parent->_left ? tmp->_parent->_left = _null_node : tmp->_parent->_right = _null_node;
+						copyNode(node, tmp);
+					}
+					else {
+						Node	*db = newNode(value_type(), tmp->_parent, BLACK);
+						db->_db = true;
+						tmp == tmp->_parent->_left ? tmp->_parent->_left = db : tmp->_parent->_right = db;
+						copyNode(node, tmp);
+						balanceDelTree(db);
+					}
+				}
+			}
+		}
+
+		void	balanceDelTree(Node *db) {
+			if (db == _root) {
+				db->_color = BLACK;
+				return ;
+			}
 			Node	*sibling = getSibling(db);
 			if (sibling->_color == RED) {
-				sibling->_color = db->_parent;
+				sibling->_color = db->_parent->_color;
 				db->_parent->_color = RED;
 				db == db->_parent->_left ? rotateLeft(db->_parent) : rotateRight(db->_parent);
 				balanceDelTree(db);
@@ -302,39 +299,45 @@ namespace ft {
 			else {
 				Node	*farSiblingChild = getFarSiblingChild(db);
 				if (farSiblingChild->_color == RED) {
-					sibling->_color = db->_parent;
+					sibling->_color = db->_parent->_color;
 					db->_parent->_color = BLACK;
 					db == db->_parent->_left ? rotateLeft(db->_parent) : rotateRight(db->_parent);
-					if (db->_db) {
-						db == db->_parent->_left ? db->_parent->_left = _null_node : db->_parent->_right = _null_node;
-						_alloc.destroy(&db->_data);
-						_node_alloc.deallocate(db, 1);
-					}
 					farSiblingChild->_color = BLACK;
+					if (db->_db)
+						destroyNode(db);
 				}
 				else {
 					Node	*nearSiblingChild = getNearSiblingChild(db);
 					if (nearSiblingChild->_color == RED) {
+						nearSiblingChild->_color = sibling->_color;
 						sibling->_color = RED;
-						nearSiblingChild->_color = BLACK;
-						db == db->_parent->_left ? rotateRight(sibling) : rotateLeft(sibling);
+						sibling == sibling->_parent->_left ? rotateLeft(sibling) : rotateRight(sibling);
 						balanceDelTree(db);
 					}
 					else {
-						Node	*tmpParent = db->_parent;
-						if (db->_db) {
-							db == db->_parent->_left ? db->_parent->_left = _null_node : db->_parent->_right = _null_node;
+						if (db->_db)
 							destroyNode(db);
-						}
 						sibling->_color = RED;
-						if (tmpParent->_color == BLACK)
-							balanceDelTree(tmpParent);
+						if (sibling->_parent->_color == BLACK)
+							balanceDelTree(sibling->_parent);
 						else
-							tmpParent->_color = BLACK;
+							sibling->_parent->_color = BLACK;
 					}
 				}
 			}
-			return (db);
+		}
+
+		void	destroyNode(Node *node) {
+			if (node != _root) {
+				if (node == node->_parent->_left)
+					node->_parent->_left = _null_node;
+				else
+					node->_parent->_right = _null_node;
+			}
+			else
+				_root = _null_node;
+			_alloc.destroy(&node->_data);
+			_node_alloc.deallocate(node, 1);
 		}
 
 		/*----- Utils -----*/
@@ -383,22 +386,63 @@ namespace ft {
 		}
 
 		void	copyNode(Node *a, Node *b) {
-			Node	*tmpParent = b->_parent;
-			Node	*tmpLeft = b->_left;
-			Node	*tmpRight = b->_right;
-
 			if (a != _root)
 				a->_parent->_left == a ? a->_parent->_left = b : a->_parent->_right = b;
 			else
 				_root = b;
 			b->_parent = a->_parent;
-			b->_left = a->_left;
-			b->_right = a->_right;
+			if (b == a->_left)
+				b->_left = a;
+			else
+				b->_left = a->_left;
+			if (b == a->_right)
+				b->_right = a;
+			else
+				b->_right = a->_right;
+				b->_left->_parent = b;
+			b->_right->_parent = b;
+			b->_color = a->_color;
+			b->_db = a->_db;
+			_alloc.destroy(&a->_data);
+			_node_alloc.deallocate(a, 1);
+		}
+
+		void	swapNode(Node *a, Node *b) {
+			Node	*tmpParent = b->_parent;
+			Node	*tmpLeft = b->_left;
+			Node	*tmpRight = b->_right;
+			bool	tmpColor = b->_color;
+			bool	tmpDb = b->_db;
+
+			if (a != _root)
+				a->_parent->_left == a ? a->_parent->_left = b : a->_parent->_right = b;
+			else
+				_root = b;
+			if (a->_left != b && a->_right != b)
+				b == b->_parent->_left ? b->_parent->_left = a : b->_parent->_right = a;
+			else
+				b->_parent = a->_parent;
+			if (b == a->_left)
+				b->_left = a;
+			else
+				b->_left = a->_left;
+			if (b == a->_right)
+				b->_right = a;
+			else
+				b->_right = a->_right;
 			b->_left->_parent = b;
 			b->_right->_parent = b;
 			b->_color = a->_color;
 			b->_db = a->_db;
-			tmpParent->_right == b ? tmpParent->_right = tmpLeft : tmpParent->_left = tmpRight;
+			
+			if (b->_left == a || b->_right == a)
+				a->_parent = b;
+			else
+				a->_parent = tmpParent;
+			a->_left = tmpLeft;
+			a->_right = tmpRight;
+			a->_color = tmpColor;
+			a->_db = tmpDb;
 		}
 
 		void	aff_node(Node *node) const {

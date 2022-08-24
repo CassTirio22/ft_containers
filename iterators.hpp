@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/18 15:34:12 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/24 19:00:32 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -385,6 +385,7 @@ namespace ft {
 
 	private:
 
+		Node	*_root;
 		Node	*_node;
 		Node	*_null_node;
 
@@ -396,13 +397,13 @@ namespace ft {
 
 		/*----- Const operator -----*/
 
-		operator MapIterator<const T, Node>() const { return (_node); }
+		operator MapIterator<const T, Node>() const { return (MapIterator<const T, Node>(_node, _null_node, _root)); }
 
 		/*----- Constructors -----*/
 
-		MapIterator(void) : _node(NULL), _null_node(NULL) {}
-		MapIterator(Node *node, Node *null_node) : _node(node), _null_node(null_node) {}
-		MapIterator(const MapIterator &it) : _node(it.getNode()), _null_node(it.getNullNode()) {}
+		MapIterator(void) : _node(NULL), _null_node(NULL), _root(NULL) {}
+		MapIterator(Node *node, Node *null_node, Node *root) : _node(node), _null_node(null_node), _root(root) {}
+		MapIterator(const MapIterator &it) : _node(it.getNode()), _null_node(it.getNullNode()), _root(it.getRoot()) {}
 
 		/*----- Assign operator -----*/
 
@@ -415,6 +416,7 @@ namespace ft {
 
 		Node	*getNode(void) const { return (_node); }
 		Node	*getNullNode(void) const {return (_null_node); }
+		Node	*getRoot(void) const {return (_root); }
 
 		/*----- Access operator -----*/
 
@@ -433,12 +435,18 @@ namespace ft {
 			static_cast<void>(n);
 			Node	*tmp = _node;
 			_node = ft_next(_node);
-			return (MapIterator(tmp, _null_node));
+			return (MapIterator(tmp, _null_node, _root));
 		}
 
 		/*----- Decrement operators -----*/
 
 		MapIterator&	operator--(void) {
+			if (_node == _null_node) {
+				_node = _root;
+				while (_node->_right != _null_node)
+					_node = _node->_right;
+				return (*this);
+			}
 			_node = ft_prev(_node);
 			return (*this);
 		}
@@ -446,6 +454,12 @@ namespace ft {
 		MapIterator	operator--(int n) {
 			static_cast<void>(n);
 			Node	*tmp = _node;
+			if (_node == _null_node) {
+				_node = _root;
+				while (_node->_right != _null_node)
+					_node = _node->_right;
+				return (MapIterator(tmp, _null_node, _root));
+			}
 			_node = ft_prev(_node);
 			return (MapIterator(tmp, _null_node));
 		}
@@ -456,6 +470,8 @@ namespace ft {
 			Node	*tmp;
 
 			if (node->_right == _null_node) {
+				if (node->_left == _null_node && node == node->_parent->_right)
+					return (_null_node);
 				tmp = node;
 				while (tmp->_parent != _null_node && tmp == tmp->_parent->_right)
 					tmp = tmp->_parent;
@@ -468,7 +484,7 @@ namespace ft {
 			return (tmp);
 		}
 
-		Node	*ft_prev(Node *node) {
+		Node	*ft_prev(Node *node) {		// !!!! SI PREV DU MINIMUN
 			Node	*tmp;
 
 			if (node->_left == _null_node) {
@@ -484,8 +500,6 @@ namespace ft {
 			return (tmp);
 		}
 	};
-
-
 };
 
 #endif
