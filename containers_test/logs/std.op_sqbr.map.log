@@ -1,5 +1,5 @@
 size: 3
-max_size: 256204778801521550
+max_size: 115292150460684697
 
 Content is:
 - key: a | value: an element
@@ -8,7 +8,7 @@ Content is:
 ###############################################
 insert a new element via operator[]: 
 size: 4
-max_size: 256204778801521550
+max_size: 115292150460684697
 
 Content is:
 - key: a | value: an element

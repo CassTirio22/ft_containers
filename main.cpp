@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:15:21 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/24 19:04:22 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/25 17:44:49 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "rbt.hpp"
 #include "iterators.hpp"
 #include "map.hpp"
+#include "utils.hpp"
 
 int main(void) {
 

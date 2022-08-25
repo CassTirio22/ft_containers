@@ -1,6 +1,6 @@
 1,37d0
 < size: 6
-< max_size: 288230376151711743
+< max_size: 128102389400760775
 < 
 < Content is:
 < - key: 12 | value: no
@@ -24,7 +24,7 @@
 < map::count(90)	returned [1]
 < map::count(100)	returned [0]
 < size: 6
-< max_size: 288230376151711743
+< max_size: 128102389400760775
 < 
 < Content is:
 < - key: 12 | value: no

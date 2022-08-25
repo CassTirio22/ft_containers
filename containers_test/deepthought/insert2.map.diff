@@ -9,7 +9,7 @@
 < key: 55 | value: fuzzy
 < 	-- [0] --
 < size: 7
-< max_size: 288230376151711743
+< max_size: 128102389400760775
 < 
 < Content is:
 < - key: 21 | value: fizz
@@ -30,7 +30,7 @@
 < key: 55 | value: inside map too
 < 	-- [1] --
 < size: 7
-< max_size: 288230376151711743
+< max_size: 128102389400760775
 < 
 < Content is:
 < - key: 21 | value: fizz
@@ -43,7 +43,7 @@
 < ###############################################
 < 	-- [2] --
 < size: 12
-< max_size: 288230376151711743
+< max_size: 128102389400760775
 < 
 < Content is:
 < - key: 1 | value: surprising isnt it?

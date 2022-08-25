@@ -6,14 +6,12 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:57:07 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/22 01:59:27 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/25 18:15:21 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_HPP
 # define UTILS_HPP
-
-# include <type_traits>
 
 namespace ft {
 
@@ -24,8 +22,16 @@ namespace ft {
 
 	/*----- Is integral -----*/
 
-	typedef	std::integral_constant<bool, true> true_type;
-	typedef std::integral_constant<bool, false> false_type;
+	template <class T, T v>
+	struct integral_constant {
+ 		static const T value = v;
+  		typedef T value_type;
+  		typedef integral_constant<T,v> type;
+  		operator T() const { return v; }
+	};
+
+	typedef	ft::integral_constant<bool, true> true_type;
+	typedef ft::integral_constant<bool, false> false_type;
 
 
 	template <class T> struct is_integral : public false_type {};
@@ -33,8 +39,6 @@ namespace ft {
 
 	template <> struct is_integral<bool> : public true_type {};
 	template <> struct is_integral<char> : public true_type {};
-	template <> struct is_integral<char16_t> : public true_type {};
-	template <> struct is_integral<char32_t> : public true_type {};
 	template <> struct is_integral<wchar_t> : public true_type {};
 	template <> struct is_integral<signed char> : public true_type {};
 	template <> struct is_integral<unsigned char> : public true_type {};

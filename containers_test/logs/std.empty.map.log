@@ -1,6 +1,6 @@
 is_empty: 0
 size: 7
-max_size: 461168601842738790
+max_size: 230584300921369395
 
 Content is:
 - key: a | value: 7
@@ -14,7 +14,7 @@ Content is:
 is_empty: 1
 is_empty: 0
 size: 7
-max_size: 461168601842738790
+max_size: 230584300921369395
 
 Content is:
 - key: a | value: 21
@@ -26,7 +26,7 @@ Content is:
 - key: g | value: 1
 ###############################################
 size: 7
-max_size: 461168601842738790
+max_size: 230584300921369395
 
 Content is:
 - key: a | value: 7
@@ -39,7 +39,7 @@ Content is:
 ###############################################
 is_empty: 1
 size: 0
-max_size: 461168601842738790
+max_size: 230584300921369395
 
 Content is:
 ###############################################

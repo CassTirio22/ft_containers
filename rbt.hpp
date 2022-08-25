@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/24 17:42:39 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/25 18:19:50 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,7 +173,7 @@ namespace ft {
 
 		/*----- Insert -----*/
 
-		ft::pair<Node *, bool>	insert(Node *node, value_type val) {
+		ft::pair<Node *, bool>	insert(value_type val) {
 			Node	*tmp = _root;
 			if (_root == _null_node)
 				return (ft::make_pair(_root = newNode(val, NULL, BLACK), true));
@@ -399,7 +399,7 @@ namespace ft {
 				b->_right = a;
 			else
 				b->_right = a->_right;
-				b->_left->_parent = b;
+			b->_left->_parent = b;
 			b->_right->_parent = b;
 			b->_color = a->_color;
 			b->_db = a->_db;

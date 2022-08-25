@@ -2,7 +2,7 @@
 insert return: key: 42 | value: lol
 Created new node: 1
 size: 1
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 42 | value: lol
@@ -11,7 +11,7 @@ Content is:
 insert return: key: 42 | value: lol
 Created new node: 0
 size: 1
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 42 | value: lol
@@ -20,7 +20,7 @@ Content is:
 insert return: key: 50 | value: mdr
 Created new node: 1
 size: 2
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 42 | value: lol
@@ -30,7 +30,7 @@ Content is:
 insert return: key: 35 | value: funny
 Created new node: 1
 size: 3
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 35 | value: funny
@@ -41,7 +41,7 @@ Content is:
 insert return: key: 45 | value: bunny
 Created new node: 1
 size: 4
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 35 | value: funny
@@ -53,7 +53,7 @@ Content is:
 insert return: key: 21 | value: fizz
 Created new node: 1
 size: 5
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 21 | value: fizz
@@ -66,7 +66,7 @@ Content is:
 insert return: key: 38 | value: buzz
 Created new node: 1
 size: 6
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 21 | value: fizz
@@ -79,7 +79,7 @@ Content is:
 	-- [7] --
 insert return: key: 55 | value: fuzzy
 size: 7
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 21 | value: fizz
@@ -93,7 +93,7 @@ Content is:
 	-- [8] --
 insert return: key: 1337 | value: beauty
 size: 1
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 1337 | value: beauty
@@ -101,7 +101,7 @@ Content is:
 	-- [9] --
 insert return: key: 1000 | value: Hello
 size: 2
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 1000 | value: Hello
@@ -110,7 +110,7 @@ Content is:
 	-- [10] --
 insert return: key: 1500 | value: World
 size: 3
-max_size: 288230376151711743
+max_size: 128102389400760775
 
 Content is:
 - key: 1000 | value: Hello

@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/24 19:00:32 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/08/25 18:13:58 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ namespace ft {
 
 	template <typename T>
 	class iterator_traits {
-		typedef ptrdiff_t					difference_type;
+		typedef std::ptrdiff_t				difference_type;
 		typedef T*							pointer;
 		typedef	T&							reference;
 		typedef T							type_value;
@@ -38,7 +38,7 @@ namespace ft {
 
 	/*----- My Iterator struct -----*/
 
-	template <class Category, class T, class Distance = ptrdiff_t, class Pointer = T*, class Reference = T&>
+	template <class Category, class T, class Distance = std::ptrdiff_t, class Pointer = T*, class Reference = T&>
 	struct Iterator {
 		typedef T			value_type;
 		typedef Distance	difference_type;
@@ -380,8 +380,7 @@ namespace ft {
 	class MapIterator {
 	public:
 
-		typedef	T			value_type;
-		typedef	ptrdiff_t	difference_type;
+		typedef	T				value_type;
 
 	private:
 
