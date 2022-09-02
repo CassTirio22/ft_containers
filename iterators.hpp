@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/25 18:13:58 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/02 18:43:54 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -384,16 +384,14 @@ namespace ft {
 
 	private:
 
-		Node	*_root;
 		Node	*_node;
 		Node	*_null_node;
+		Node	*_root;
 
 	public:
 
-		/*-----  -----*/
-		/*-----  -----*/
-		/*-----  -----*/
 
+		/*---------- MEMBER FUNCTIONS ----------*/
 		/*----- Const operator -----*/
 
 		operator MapIterator<const T, Node>() const { return (MapIterator<const T, Node>(_node, _null_node, _root)); }
@@ -426,6 +424,12 @@ namespace ft {
 		/*----- Increment operators -----*/
 
 		MapIterator&	operator++(void) {
+			if (_node == _null_node) {
+				_node = _root;
+				while (_node->_left != _null_node)
+					_node = _node->_left;
+				return (*this);
+			}
 			_node = ft_next(_node);
 			return (*this);
 		}
@@ -433,6 +437,12 @@ namespace ft {
 		MapIterator	operator++(int n) {
 			static_cast<void>(n);
 			Node	*tmp = _node;
+			if (_node == _null_node) {
+				_node = _root;
+				while (_node->_left != _null_node)
+					_node = _node->_left;
+				return (MapIterator(tmp, _null_node, _root));
+			}
 			_node = ft_next(_node);
 			return (MapIterator(tmp, _null_node, _root));
 		}
@@ -468,9 +478,15 @@ namespace ft {
 		Node	*ft_next(Node *node) {
 			Node	*tmp;
 
+			tmp = node;
+			while (tmp->_parent)
+				tmp = tmp->_parent;
+			while (tmp->_right != _null_node)
+				tmp = tmp->_right;
+			if (node == tmp) {
+				return (_null_node);
+			}
 			if (node->_right == _null_node) {
-				if (node->_left == _null_node && node == node->_parent->_right)
-					return (_null_node);
 				tmp = node;
 				while (tmp->_parent != _null_node && tmp == tmp->_parent->_right)
 					tmp = tmp->_parent;
@@ -483,9 +499,16 @@ namespace ft {
 			return (tmp);
 		}
 
-		Node	*ft_prev(Node *node) {		// !!!! SI PREV DU MINIMUN
+		Node	*ft_prev(Node *node) {
 			Node	*tmp;
 
+			tmp = node;
+			while (tmp->_parent)
+				tmp = tmp->_parent;
+			while (tmp->_left != _null_node)
+				tmp = tmp->_left;
+			if (node == tmp)
+				return (_null_node);
 			if (node->_left == _null_node) {
 				tmp = node;
 				while (tmp->_parent != _null_node && tmp == tmp->_parent->_left)
@@ -499,6 +522,15 @@ namespace ft {
 			return (tmp);
 		}
 	};
+
+	/*---------- NON-MEMBER FUNCTIONS ----------*/
+
+	template<class Key1, class T1, class Key2, class T2>
+	bool	operator==(ft::MapIterator<Key1, T1> &lhs, ft::MapIterator<Key2, T2> &rhs) { return (lhs.getNode() == rhs.getNode()); }
+
+	template<class Key1, class T1, class Key2, class T2>
+	bool	operator!=(ft::MapIterator<Key1, T1> &lhs, ft::MapIterator<Key2, T2> &rhs) { return (lhs.getNode() != rhs.getNode()); }
+
 };
 
 #endif

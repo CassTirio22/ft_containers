@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:15:21 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/25 17:44:49 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/02 17:49:55 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int main(void) {
 	
 	ft::map<const int, char>::const_iterator	it = (map.end());
 
-	std::cout << (it).getNode()->_data._first << std::endl;
+	std::cout << (it).getNode()->_data.first << std::endl;
 
 	std::cout << "-------------" << std::endl;
 

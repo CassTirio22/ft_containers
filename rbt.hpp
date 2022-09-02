@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/25 18:19:50 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/02 17:55:29 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ namespace ft {
 		Node	*getRoot(void) const { return (_root); }
 		Node	*getNullNode(void) const { return (_null_node); }
 		key_compare	getKeyCompare(void) const { return (_cmp); }
+		node_allocator_type	getNodeAlloc(void) const { return (_node_alloc); }
 
 		Node	*getUncle(Node *node) const {
 			if (node->_parent == _root || node == _root || node == NULL || node == _null_node)
@@ -178,7 +179,7 @@ namespace ft {
 			if (_root == _null_node)
 				return (ft::make_pair(_root = newNode(val, NULL, BLACK), true));
 			while (true) {
-				if (_cmp(val._first, tmp->_data._first)) {
+				if (_cmp(val.first, tmp->_data.first)) {
 					if (tmp->_left == _null_node) {
 						tmp->_left = newNode(val, tmp, RED);
 						return (balanceTree(tmp->_left));
@@ -186,7 +187,7 @@ namespace ft {
 					else
 						tmp = tmp->_left;
 				}
-				else if (_cmp(tmp->_data._first, val._first)) {
+				else if (_cmp(tmp->_data.first, val.first)) {
 					if (tmp->_right == _null_node) {
 						tmp->_right = newNode(val, tmp, RED);
 						return (balanceTree(tmp->_right));
@@ -239,7 +240,7 @@ namespace ft {
 
 		void	deleteNode(key_type key) {
 			Node	*node = findNode(key);
-			if (node->_data._first != key)
+			if (node->_data.first != key)
 				return ;
 			if (node->_left == _null_node && node->_right == _null_node) {
 				if (node->_color == RED || node == _root)
@@ -448,7 +449,7 @@ namespace ft {
 		void	aff_node(Node *node) const {
 			std::string	color;
 			node->_color ? color = "black" : color = "red";
-			std::cout << node->_data._first << " | " << node->_data._second << " | " << color << std::endl;
+			std::cout << node->_data.first << " | " << node->_data.second << " | " << color << std::endl;
 		}
 
 		void	aff_tree(Node *node, int space) const {
@@ -465,13 +466,17 @@ namespace ft {
 			}
 		}
 
-		Node	*minimum(Node* x) {
+		Node	*minimum(Node* x) const {
+			if (x == _null_node)
+				return (x);
 			while (x->_left != _null_node)
 				x = x->_left;
 			return (x);
 		}
 
-		Node*	maximum(Node* x) {
+		Node*	maximum(Node* x) const {
+			if (x == _null_node)
+				return (x);
 			while (x->_right != _null_node)
 				x = x->_right;
 			return (x);
@@ -493,13 +498,13 @@ namespace ft {
 		Node	*findNode(key_type key) {
 			Node	*toFind = _root;
 
-			while (_cmp(key, toFind->_data._first) || _cmp(toFind->_data._first, key)) {
-				if (_cmp(key, toFind->_data._first)) {
+			while (_cmp(key, toFind->_data.first) || _cmp(toFind->_data.first, key)) {
+				if (_cmp(key, toFind->_data.first)) {
 					if (toFind->_left == _null_node)
 						return (toFind);
 					toFind = toFind->_left;
 				}
-				else if (_cmp(toFind->_data._first, key)) {
+				else if (_cmp(toFind->_data.first, key)) {
 					if (toFind->_right == _null_node)
 						return (toFind);
 					toFind = toFind->_right;

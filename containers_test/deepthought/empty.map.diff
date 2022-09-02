@@ -1,19 +1,4 @@
-1,45d0
-< is_empty: 0
-< size: 7
-< max_size: 230584300921369395
-< 
-< Content is:
-< - key: a | value: 7
-< - key: b | value: 6
-< - key: c | value: 5
-< - key: d | value: 4
-< - key: e | value: 3
-< - key: f | value: 2
-< - key: g | value: 1
-< ###############################################
-< is_empty: 1
-< is_empty: 0
+16,45d15
 < size: 7
 < max_size: 230584300921369395
 < 

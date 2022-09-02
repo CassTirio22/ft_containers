@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/21 17:59:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/10 18:09:31 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/02 17:50:10 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,23 @@ namespace ft {
 	template < class T1, class T2 >
 	struct pair {
 	public:
-		T1	_first;
-		T2	_second;
+		T1	first;
+		T2	second;
 
 		/*---------- MEMBER FUNCTIONS ----------*/
 
 		/*----- Constructors -----*/
 
-		pair(void) : _first(T1()), _second(T2()) {}
-		pair(const T1 &a, const T2 &b) : _first(a), _second(b) {}
+		pair(void) : first(T1()), second(T2()) {}
+		pair(const T1 &a, const T2 &b) : first(a), second(b) {}
 		template <class U1, class U2>
-		pair(const pair<U1, U2> &p) : _first(p._first), _second(p._second) {}
+		pair(const pair<U1, U2> &p) : first(p.first), second(p.second) {}
 
 		/*----- Assignation operator -----*/
 
 		pair	&operator=(const pair &p) {
-			_first = p._first;
-			_second = p._second;
+			first = p.first;
+			second = p.second;
 			return (*this);
 		}
 	};
@@ -47,7 +47,7 @@ namespace ft {
 
 	template <class T1, class T2>
 	bool	operator==(const pair<T1, T2> &lhs, const pair<T1, T2> &rhs) {
-		return (lhs._first == rhs._first && lhs._second == rhs._second);
+		return (lhs.first == rhs.first && lhs.second == rhs.second);
 	}
 
 	template <class T1, class T2>
@@ -57,7 +57,7 @@ namespace ft {
 
 	template <class T1, class T2>
 	bool	operator<(const pair<T1, T2> &lhs, const pair<T1, T2> &rhs) {
-		return (lhs._first < rhs._first || (!(rhs._first < lhs._first) && lhs._second < rhs._second));
+		return (lhs.first < rhs.first || (!(rhs.first < lhs.first) && lhs.second < rhs.second));
 	}
 
 	template <class T1, class T2>

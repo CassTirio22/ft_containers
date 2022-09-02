@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 21:04:47 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/25 17:40:16 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/02 18:39:38 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,10 @@ namespace ft {
 
 		};
 
-		rbt_type		_rbt;
-		size_type		_size;
 		key_compare		_comp;
 		allocator_type	_alloc;
+		rbt_type		_rbt;
+		size_type		_size;
 		value_compare	_val_comp;
 
 	public:
@@ -70,6 +70,11 @@ namespace ft {
 		/*----- Constructors -----*/
 
 		explicit map(const key_compare &comp = key_compare(), const allocator_type &alloc = allocator_type()) : _comp(comp), _alloc(alloc), _rbt(rbt_type()), _size(0), _val_comp(value_compare(comp)) {}
+
+		template <class InputIterator>
+ 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _comp(comp), _alloc(alloc), _rbt(rbt_type()), _size(0), _val_comp(value_compare(comp)) { insert(first, last); }
+
+		map(const map &x) : _comp(x.key_comp()), _alloc(x.get_allocator()), _rbt(rbt_type()), _size(0), _val_comp(x.value_comp()) { insert(x.begin(), x.end()); }
 
 		/*----- Getter -----*/
 
@@ -100,27 +105,27 @@ namespace ft {
 
 		size_type	size(void) const { return (_size); }
 
-		size_type	max_size(void) { return (_rbt._node_alloc.max_size()); }
+		size_type	max_size(void) const { return (_rbt.getNodeAlloc().max_size()); }
 
 		/*----- Element access -----*/
 
 		T	&operator[](const Key &key) {
-			return ((_rbt.findNode(key))->_data._second);
+			return (insert(ft::make_pair(key, T())).first->second);
 		}
 
 		/*----- Modifiers -----*/
 
 		ft::pair<iterator, bool>	insert(const value_type &value) {
-			ft::pair<Node<const Key, T> *, bool>	ret = _rbt.insert(_rbt.getRoot(), value);
-			iterator	it(ret._first, _rbt.getNullNode(), _rbt.getRoot());
-			if (ret._second)
+			ft::pair<Node<const Key, T> *, bool>	ret = _rbt.insert(value);
+			iterator	it(ret.first, _rbt.getNullNode(), _rbt.getRoot());
+			if (ret.second)
 				_size++;
-			return (ft::make_pair<iterator, bool>(it, ret._second));
+			return (ft::make_pair<iterator, bool>(it, ret.second));
 		}
 
 		iterator	insert(iterator position, const value_type &val) {
 			static_cast<void>(position);
-			return (insert(val)._first);
+			return (insert(val).first);
 		}
 
 		template <class InputIt>
@@ -132,22 +137,22 @@ namespace ft {
 		}
 
 		void	erase(iterator pos) {
-			erase(pos.getNode()->_data._first);
+			erase(pos.getNode()->_data.first);
 		}
 
 		void	erase(iterator first, iterator last) {
-			for (; first != last; first++)
-				erase(first);
+			while (first != last)
+				erase(first++);
 		}
 
 		size_type	erase(const key_type &key) {
 			if (!_size)
 				return (0);
 			Node<const Key, T>	*node = _rbt.findNode(key);
-			if (node->_data._first != key)
+			if (node->_data.first != key)
 				return (0);
 			_size--;
-			_rbt.deleteNode(node->_data._first);
+			_rbt.deleteNode(node->_data.first);
 			return (1);
 		}
 
@@ -176,16 +181,18 @@ namespace ft {
 		const_iterator	find(const key_type &k) const { return (const_iterator(_rbt.findNode(k), _rbt.getNullNode())); }
 
 		size_type	count(const key_type &k) const {
-			if (k == _rbt.findNode(k)->_data._first)
+			if (k == _rbt.findNode(k)->_data.first)
 				return (1);
 			return (0);
 		}
 
 		iterator	lower_bound(const key_type &k) {
-			for (iterator it = begin(); it != end(); it++) {
-				if (it.getNode()->_data._first == k)
+			iterator it(begin().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			iterator ite(end().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			for (; it != ite; it++) {
+				if (it.getNode()->_data.first == k)
 					return (it);
-				else if (it.getNode()->_data._first > k) {
+				else if (it.getNode()->_data.first > k) {
 					if (it.getNode() == it.getRoot())
 						return (it);
 					return (--it);
@@ -195,34 +202,40 @@ namespace ft {
 		}
 
 		const_iterator	lower_bound(const key_type &k) const {
-			for (const_iterator it = begin(); it != end(); it++) {
-				if (it.getNode()->_data._first == k)
+			iterator it(begin().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			iterator ite(end().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			for (; it != ite; it++) {
+				if (it.getNode()->_data.first == k)
 					return (it);
-				else if (it.getNode()->_data._first > k) {
+				else if (it.getNode()->_data.first > k) {
 					if (it.getNode() == it.getRoot())
-						return (it);
-					return (--it);
+						return (const_iterator(it));
+					return (const_iterator(--it));
 				}
 			}
 			return (end());
 		}
 
 		iterator	upper_bound(const key_type &k) {
-			for (iterator it = begin(); it != end(); it++) {
-				if (it.getNode()->_data._first == k)
+			iterator it(begin().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			iterator ite(end().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			for (; it != ite; it++) {
+				if (it.getNode()->_data.first == k)
 					return (++it);
-				else if (it.getNode()->_data._first > k)
+				else if (it.getNode()->_data.first > k)
 					return (it);
 			}
 			return (end());
 		}
 
-		const_iterator	upper_bound(const key_type &k) const {
-			for (const_iterator it = begin(); it != end(); it++) {
-				if (it.getNode()->_data._first == k)
+		const_iterator	upper_bound(const key_type &k) const {\
+			iterator it(begin().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			iterator ite(end().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			for (; it != ite; it++) {
+				if (it.getNode()->_data.first == k)
 					return (++it);
-				else if (it.getNode()->_data._first > k)
-					return (it);
+				else if (it.getNode()->_data.first > k)
+					return (const_iterator(it));
 			}
 			return (end());
 		}
