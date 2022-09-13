@@ -25,6 +25,8 @@ int		main(void)
 	is_empty(mp);
 	printSize(mp);
 
+	std::cout << "coucou" << std::endl;
+
 	is_empty(mp2);
 	mp2 = mp;
 	is_empty(mp2);

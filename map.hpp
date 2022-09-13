@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 21:04:47 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/02 18:39:38 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/13 18:50:38 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,18 @@ namespace ft {
  		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _comp(comp), _alloc(alloc), _rbt(rbt_type()), _size(0), _val_comp(value_compare(comp)) { insert(first, last); }
 
 		map(const map &x) : _comp(x.key_comp()), _alloc(x.get_allocator()), _rbt(rbt_type()), _size(0), _val_comp(x.value_comp()) { insert(x.begin(), x.end()); }
+
+		/*----- Assign operator -----*/
+
+		map	&operator=(const map &x) {
+			clear();
+			_comp = x.key_comp();
+			_alloc = x.get_allocator();
+			_size = 0;
+			_val_comp = x.value_comp();
+			insert(x.begin(), x.end());
+			return (*this);
+		}
 
 		/*----- Getter -----*/
 
@@ -167,6 +179,7 @@ namespace ft {
 		void	clear(void) {
 			_rbt.destroyRbt(_rbt.getRoot());
 			_rbt.setRoot(_rbt.getNullNode());
+			_size = 0;
 		}
 
 		/*----- Observers -----*/
@@ -259,6 +272,7 @@ namespace ft {
 		void	affNode(Node<const Key, T> *node) const { _rbt.aff_node(node); }
 		
 		Node<const Key, T>	*getRoot(void) const { return (_rbt.getRoot()); }
+
 	};
 
 	/*---------- NON-MEMBER FUNCTIONS ----------*/
