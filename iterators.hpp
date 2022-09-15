@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/13 18:54:19 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/15 16:50:22 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,6 +212,184 @@ namespace ft {
 	}
 
 
+
+
+	/*---------- RBT ITERATORS ----------*/
+
+	template<class T, class Node>
+	class MapIterator {
+	public:
+
+		typedef typename ft::Iterator<BidirectionalIteratorTag, T>::value_type		value_type;
+		typedef typename ft::Iterator<BidirectionalIteratorTag, T>::difference_type	difference_type;
+		typedef typename ft::Iterator<BidirectionalIteratorTag, T>::pointer			pointer;
+		typedef typename ft::Iterator<BidirectionalIteratorTag, T>::reference			reference;
+		typedef typename ft::Iterator<BidirectionalIteratorTag, T>::iterator_category	iterator_category;
+
+	private:
+
+		Node	*_node;
+		Node	*_null_node;
+		Node	*_root;
+
+	public:
+
+
+		/*---------- MEMBER FUNCTIONS ----------*/
+		/*----- Const operator -----*/
+
+		operator MapIterator<const T, Node>() const { return (MapIterator<const T, Node>(_node, _null_node, _root)); }
+
+		/*----- Constructors -----*/
+
+		MapIterator(void) : _node(NULL), _null_node(NULL), _root(NULL) {}
+		MapIterator(Node *node, Node *null_node, Node *root) : _node(node), _null_node(null_node), _root(root) {}
+		MapIterator(const MapIterator &it) : _node(it.getNode()), _null_node(it.getNullNode()), _root(it.getRoot()) {}
+
+		/*----- Destructor -----*/
+
+		~MapIterator(void) {}
+
+		/*----- Assign operator -----*/
+
+		MapIterator	&operator=(const MapIterator &it) {
+			_node = it.getNode();
+			return (*this);
+		}
+
+		/*----- Getters -----*/
+
+		Node	*getNode(void) const { return (_node); }
+		Node	*getNullNode(void) const {return (_null_node); }
+		Node	*getRoot(void) const {return (_root); }
+
+		/*----- Access operator -----*/
+
+		value_type	&operator*(void) const { return (_node->_data); }
+
+		value_type	*operator->(void) const { return (&_node->_data); }
+
+		/*----- Increment operators -----*/
+
+		MapIterator&	operator++(void) {
+			if (_node == _null_node) {
+				_node = _root;
+				while (_node->_left != _null_node)
+					_node = _node->_left;
+				return (*this);
+			}
+			_node = ft_next(_node);
+			return (*this);
+		}
+
+		MapIterator	operator++(int n) {
+			static_cast<void>(n);
+			Node	*tmp = _node;
+			if (_node == _null_node) {
+				_node = _root;
+				while (_node->_left != _null_node)
+					_node = _node->_left;
+				return (MapIterator(tmp, _null_node, _root));
+			}
+			_node = ft_next(_node);
+			return (MapIterator(tmp, _null_node, _root));
+		}
+
+		/*----- Decrement operators -----*/
+
+		MapIterator&	operator--(void) {
+			if (_node == _null_node) {
+				_node = _root;
+				while (_node->_right != _null_node)
+					_node = _node->_right;
+				return (*this);
+			}
+			_node = ft_prev(_node);
+			return (*this);
+		}
+
+		MapIterator	operator--(int n) {
+			static_cast<void>(n);
+			Node	*tmp = _node;
+			if (_node == _null_node) {
+				_node = _root;
+				while (_node->_right != _null_node)
+					_node = _node->_right;
+				return (MapIterator(tmp, _null_node, _root));
+			}
+			_node = ft_prev(_node);
+			return (MapIterator(tmp, _null_node, _root));
+		}
+
+		/*----- Utils -----*/
+
+		Node	*ft_next(Node *node) {
+			Node	*tmp = node;
+
+			if (node == maximum(node))
+				return (_null_node);
+			if (node->_right == _null_node) {
+				tmp = node;
+				while (tmp->_parent != _null_node && tmp == tmp->_parent->_right)
+					tmp = tmp->_parent;
+				tmp = tmp->_parent;
+				return (tmp);
+			}
+			tmp = node->_right;
+			while (tmp->_left != _null_node)
+				tmp = tmp->_left;
+			return (tmp);
+		}
+
+		Node	*ft_prev(Node *node) {
+			Node	*tmp = node;
+
+			if (node == minimum(node))
+				return (_null_node);
+			if (node->_left == _null_node) {
+				tmp = node;
+				while (tmp->_parent != _null_node && tmp == tmp->_parent->_left)
+					tmp = tmp->_parent;
+				tmp = tmp->_parent;
+				return (tmp);
+			}
+			tmp = node->_left;
+			while (tmp->_right != _null_node)
+				tmp = tmp->_right;
+			return (tmp);
+		}
+
+		Node	*maximum(Node *node) {
+			Node	*tmp = node;
+
+			while (tmp->_parent)
+				tmp = tmp->_parent;
+			while (tmp->_right != _null_node)
+				tmp = tmp->_right;
+			return (tmp);
+		}
+		
+		Node	*minimum(Node *node) {
+			Node	*tmp = node;
+
+			while (tmp->_parent)
+				tmp = tmp->_parent;
+			while (tmp->_left != _null_node)
+				tmp = tmp->_left;
+			return (tmp);
+		}
+
+	};
+
+	/*---------- NON-MEMBER FUNCTIONS ----------*/
+
+	template<class Key1, class T1, class Key2, class T2>
+	bool	operator==(ft::MapIterator<Key1, T1> const &lhs, ft::MapIterator<Key2, T2> const &rhs) { return (lhs.getNode() == rhs.getNode()); }
+
+	template<class Key1, class T1, class Key2, class T2>
+	bool	operator!=(ft::MapIterator<Key1, T1> const &lhs, ft::MapIterator<Key2, T2> const &rhs) { return (lhs.getNode() != rhs.getNode()); }
+
+
 	/*---------- REVERSE ITERATORS ----------*/
 
 	template <class Iterator>
@@ -372,164 +550,6 @@ namespace ft {
 
 	template <class Iterator>
 	ReverseIterator<Iterator> operator+(typename ReverseIterator<Iterator>::difference_type n, const ReverseIterator<Iterator> &x){ return (ReverseIterator<Iterator>(x.base() - n)); }
-
-
-	/*---------- RBT ITERATORS ----------*/
-
-	template<class T, class Node>
-	class MapIterator {
-	public:
-
-		typedef	T				value_type;
-
-	private:
-
-		Node	*_node;
-		Node	*_null_node;
-		Node	*_root;
-
-	public:
-
-
-		/*---------- MEMBER FUNCTIONS ----------*/
-		/*----- Const operator -----*/
-
-		operator MapIterator<const T, Node>() const { return (MapIterator<const T, Node>(_node, _null_node, _root)); }
-
-		/*----- Constructors -----*/
-
-		MapIterator(void) : _node(NULL), _null_node(NULL), _root(NULL) {}
-		MapIterator(Node *node, Node *null_node, Node *root) : _node(node), _null_node(null_node), _root(root) {}
-		MapIterator(const MapIterator &it) : _node(it.getNode()), _null_node(it.getNullNode()), _root(it.getRoot()) {}
-
-		/*----- Assign operator -----*/
-
-		MapIterator	&operator=(const MapIterator &it) {
-			_node = it.getNode();
-			return (*this);
-		}
-
-		/*----- Getters -----*/
-
-		Node	*getNode(void) const { return (_node); }
-		Node	*getNullNode(void) const {return (_null_node); }
-		Node	*getRoot(void) const {return (_root); }
-
-		/*----- Access operator -----*/
-
-		value_type	&operator*(void) const { return (_node->_data); }
-
-		value_type	*operator->(void) const { return (&_node->_data); }
-
-		/*----- Increment operators -----*/
-
-		MapIterator&	operator++(void) {
-			if (_node == _null_node) {
-				_node = _root;
-				while (_node->_left != _null_node)
-					_node = _node->_left;
-				return (*this);
-			}
-			_node = ft_next(_node);
-			return (*this);
-		}
-
-		MapIterator	operator++(int n) {
-			static_cast<void>(n);
-			Node	*tmp = _node;
-			if (_node == _null_node) {
-				_node = _root;
-				while (_node->_left != _null_node)
-					_node = _node->_left;
-				return (MapIterator(tmp, _null_node, _root));
-			}
-			_node = ft_next(_node);
-			return (MapIterator(tmp, _null_node, _root));
-		}
-
-		/*----- Decrement operators -----*/
-
-		MapIterator&	operator--(void) {
-			if (_node == _null_node) {
-				_node = _root;
-				while (_node->_right != _null_node)
-					_node = _node->_right;
-				return (*this);
-			}
-			_node = ft_prev(_node);
-			return (*this);
-		}
-
-		MapIterator	operator--(int n) {
-			static_cast<void>(n);
-			Node	*tmp = _node;
-			if (_node == _null_node) {
-				_node = _root;
-				while (_node->_right != _null_node)
-					_node = _node->_right;
-				return (MapIterator(tmp, _null_node, _root));
-			}
-			_node = ft_prev(_node);
-			return (MapIterator(tmp, _null_node));
-		}
-
-		/*----- Utils -----*/
-
-		Node	*ft_next(Node *node) {
-			Node	*tmp;
-
-			tmp = node;
-			while (tmp->_parent)
-				tmp = tmp->_parent;
-			while (tmp->_right != _null_node)
-				tmp = tmp->_right;
-			if (node == tmp) {
-				return (_null_node);
-			}
-			if (node->_right == _null_node) {
-				tmp = node;
-				while (tmp->_parent != _null_node && tmp == tmp->_parent->_right)
-					tmp = tmp->_parent;
-				tmp = tmp->_parent;
-				return (tmp);
-			}
-			tmp = node->_right;
-			while (tmp->_left != _null_node)
-				tmp = tmp->_left;
-			return (tmp);
-		}
-
-		Node	*ft_prev(Node *node) {
-			Node	*tmp;
-
-			tmp = node;
-			while (tmp->_parent)
-				tmp = tmp->_parent;
-			while (tmp->_left != _null_node)
-				tmp = tmp->_left;
-			if (node == tmp)
-				return (_null_node);
-			if (node->_left == _null_node) {
-				tmp = node;
-				while (tmp->_parent != _null_node && tmp == tmp->_parent->_left)
-					tmp = tmp->_parent;
-				tmp = tmp->_parent;
-				return (tmp);
-			}
-			tmp = node->_left;
-			while (tmp->_right != _null_node)
-				tmp = tmp->_right;
-			return (tmp);
-		}
-	};
-
-	/*---------- NON-MEMBER FUNCTIONS ----------*/
-
-	template<class Key1, class T1, class Key2, class T2>
-	bool	operator==(ft::MapIterator<Key1, T1> &lhs, ft::MapIterator<Key2, T2> &rhs) { return (lhs.getNode() == rhs.getNode()); }
-
-	template<class Key1, class T1, class Key2, class T2>
-	bool	operator!=(ft::MapIterator<Key1, T1> &lhs, ft::MapIterator<Key2, T2> &rhs) { return (lhs.getNode() != rhs.getNode()); }
 
 };
 

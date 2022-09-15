@@ -1,4 +1,0 @@
-18c18
-< lower_bound: key: 1 | value: 3
----
-> lower_bound: end()

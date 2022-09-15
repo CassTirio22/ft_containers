@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 21:04:47 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/13 18:50:38 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/15 16:55:58 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include "rbt.hpp"
 
 namespace ft {
-	template <class Key, class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
+	template <class Key, class T, class Compare = std::less<const Key>, class Alloc = std::allocator<ft::pair<const Key, T> > >
 	class map {
 	public:
 
@@ -37,7 +37,7 @@ namespace ft {
 		typedef	ft::MapIterator<const value_type, ft::Node<const Key, T> >	const_iterator;
 		typedef	ft::ReverseIterator<iterator>								reverse_iterator;
 		typedef	ft::ReverseIterator<const_iterator>							const_reverse_iterator;
-		typedef	ft::rbTree<Key, T>											rbt_type;
+		typedef	ft::rbTree<Key, T, Compare>									rbt_type;
 
 	private:
 
@@ -103,13 +103,13 @@ namespace ft {
 
 		const_iterator	end(void) const { return(const_iterator(_rbt.getNullNode(), _rbt.getNullNode(), _rbt.getRoot()));}
 
-		reverse_iterator	rbegin(void) { return (--end()); }
+		reverse_iterator	rbegin(void) { return (reverse_iterator(end())); }
 
-		const_reverse_iterator	rbegin(void) const { return (--end()); }
+		const_reverse_iterator	rbegin(void) const { return (const_reverse_iterator(end())); }
 
-		reverse_iterator	rend(void) { return(--begin()); }
+		reverse_iterator	rend(void) { return(reverse_iterator(begin())); }
 
-		const_reverse_iterator	rend(void) const { return (--begin()); }
+		const_reverse_iterator	rend(void) const { return (const_reverse_iterator(begin())); }
 
 		/*----- Capacity -----*/
 
@@ -189,9 +189,9 @@ namespace ft {
 
 		/*----- Operations -----*/
 
-		iterator	find(const key_type	&k) { return (iterator(_rbt.findNode(k), _rbt.getNullNode())); }
+		iterator	find(const key_type	&k) { return (iterator(_rbt.findNode(k), _rbt.getNullNode(), _rbt.getRoot())); }
 
-		const_iterator	find(const key_type &k) const { return (const_iterator(_rbt.findNode(k), _rbt.getNullNode())); }
+		const_iterator	find(const key_type &k) const { return (const_iterator(_rbt.findNode(k), _rbt.getNullNode(), _rbt.getRoot())); }
 
 		size_type	count(const key_type &k) const {
 			if (k == _rbt.findNode(k)->_data.first)
@@ -208,6 +208,8 @@ namespace ft {
 				else if (it.getNode()->_data.first > k) {
 					if (it.getNode() == it.getRoot())
 						return (it);
+					if (it.getNode() == _rbt.minimum(_rbt.getRoot()))
+						return (it);
 					return (--it);
 				}
 			}
@@ -222,6 +224,8 @@ namespace ft {
 					return (it);
 				else if (it.getNode()->_data.first > k) {
 					if (it.getNode() == it.getRoot())
+						return (const_iterator(it));
+					if (it.getNode() == _rbt.minimum(_rbt.getRoot()))
 						return (const_iterator(it));
 					return (const_iterator(--it));
 				}

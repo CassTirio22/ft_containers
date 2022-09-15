@@ -19,6 +19,7 @@ int		main(void)
 	printSize(vct);
 
 	checkErase(vct, vct.erase(vct.begin() + 2));
+	std::cout << "couocu" << std::endl;
 
 	checkErase(vct, vct.erase(vct.begin()));
 	checkErase(vct, vct.erase(vct.end() - 1));

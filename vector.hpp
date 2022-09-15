@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/06/28 18:45:34 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/15 17:13:07 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,7 +330,7 @@ namespace ft {
 				return (iterator());
 			this->_alloc.destroy(&this->_value[pos]);
 			size_type	tmp = pos;
-			while (tmp < this->_size) {
+			while (tmp <= this->_size - 2) {
 				this->_value[tmp] = this->_value[tmp + 1];
 				tmp++;
 			}
