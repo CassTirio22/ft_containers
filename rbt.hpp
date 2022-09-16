@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/13 18:50:44 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/16 16:53:45 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -238,7 +238,7 @@ namespace ft {
 
 		/*----- Delete -----*/
 
-		void	deleteNode(key_type key) {
+		void	deleteNode(const key_type key) {
 			Node	*node = findNode(key);
 			if (node->_data.first != key)
 				return ;
@@ -495,7 +495,7 @@ namespace ft {
 			}
 		}
 
-		Node	*findNode(key_type key) {
+		Node	*findNode(const key_type key) const {
 			Node	*toFind = _root;
 
 			while (_cmp(key, toFind->_data.first) || _cmp(toFind->_data.first, key)) {

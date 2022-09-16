@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 21:04:47 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/15 16:55:58 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/16 17:06:56 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ namespace ft {
 		typedef	ft::MapIterator<const value_type, ft::Node<const Key, T> >	const_iterator;
 		typedef	ft::ReverseIterator<iterator>								reverse_iterator;
 		typedef	ft::ReverseIterator<const_iterator>							const_reverse_iterator;
-		typedef	ft::rbTree<Key, T, Compare>									rbt_type;
+		typedef	ft::rbTree<const Key, T, Compare>									rbt_type;
 
 	private:
 
@@ -189,7 +189,12 @@ namespace ft {
 
 		/*----- Operations -----*/
 
-		iterator	find(const key_type	&k) { return (iterator(_rbt.findNode(k), _rbt.getNullNode(), _rbt.getRoot())); }
+		iterator	find(const key_type	&k) {
+			iterator	ret(_rbt.findNode(k), _rbt.getNullNode(), _rbt.getRoot());
+			if (ret->first == k)
+				return (ret);
+			return (iterator(_rbt.getNullNode(), _rbt.getNullNode(), _rbt.getRoot()));
+		}
 
 		const_iterator	find(const key_type &k) const { return (const_iterator(_rbt.findNode(k), _rbt.getNullNode(), _rbt.getRoot())); }
 

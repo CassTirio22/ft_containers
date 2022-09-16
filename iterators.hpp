@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/15 16:50:22 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/16 17:40:52 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,15 +330,15 @@ namespace ft {
 				return (_null_node);
 			if (node->_right == _null_node) {
 				tmp = node;
-				while (tmp->_parent != _null_node && tmp == tmp->_parent->_right)
+				while (tmp->_parent && tmp == tmp->_parent->_right)
 					tmp = tmp->_parent;
 				tmp = tmp->_parent;
-				return (tmp);
+				return (tmp ? tmp : _null_node);
 			}
 			tmp = node->_right;
 			while (tmp->_left != _null_node)
 				tmp = tmp->_left;
-			return (tmp);
+			return (tmp ? tmp : _null_node);
 		}
 
 		Node	*ft_prev(Node *node) {
@@ -348,7 +348,7 @@ namespace ft {
 				return (_null_node);
 			if (node->_left == _null_node) {
 				tmp = node;
-				while (tmp->_parent != _null_node && tmp == tmp->_parent->_left)
+				while (tmp->_parent && tmp == tmp->_parent->_left)
 					tmp = tmp->_parent;
 				tmp = tmp->_parent;
 				return (tmp);
