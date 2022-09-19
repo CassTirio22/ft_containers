@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/16 17:40:52 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/19 16:01:14 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -236,6 +236,7 @@ namespace ft {
 
 
 		/*---------- MEMBER FUNCTIONS ----------*/
+
 		/*----- Const operator -----*/
 
 		operator MapIterator<const T, Node>() const { return (MapIterator<const T, Node>(_node, _null_node, _root)); }
@@ -244,7 +245,7 @@ namespace ft {
 
 		MapIterator(void) : _node(NULL), _null_node(NULL), _root(NULL) {}
 		MapIterator(Node *node, Node *null_node, Node *root) : _node(node), _null_node(null_node), _root(root) {}
-		MapIterator(const MapIterator &it) : _node(it.getNode()), _null_node(it.getNullNode()), _root(it.getRoot()) {}
+		MapIterator(const MapIterator<T, Node> &it) : _node(it.getNode()), _null_node(it.getNullNode()), _root(it.getRoot()) {}
 
 		/*----- Destructor -----*/
 
@@ -254,16 +255,22 @@ namespace ft {
 
 		MapIterator	&operator=(const MapIterator &it) {
 			_node = it.getNode();
+			_null_node = it.getNullNode();
+			_root = it.getRoot();
 			return (*this);
 		}
 
 		/*----- Getters -----*/
+
+	private:
 
 		Node	*getNode(void) const { return (_node); }
 		Node	*getNullNode(void) const {return (_null_node); }
 		Node	*getRoot(void) const {return (_root); }
 
 		/*----- Access operator -----*/
+
+	public:
 
 		value_type	&operator*(void) const { return (_node->_data); }
 
@@ -368,7 +375,7 @@ namespace ft {
 				tmp = tmp->_right;
 			return (tmp);
 		}
-		
+
 		Node	*minimum(Node *node) {
 			Node	*tmp = node;
 
@@ -379,15 +386,17 @@ namespace ft {
 			return (tmp);
 		}
 
+		Node	*base(void) const { return (_node); }
 	};
+
 
 	/*---------- NON-MEMBER FUNCTIONS ----------*/
 
 	template<class Key1, class T1, class Key2, class T2>
-	bool	operator==(ft::MapIterator<Key1, T1> const &lhs, ft::MapIterator<Key2, T2> const &rhs) { return (lhs.getNode() == rhs.getNode()); }
+	bool	operator==(ft::MapIterator<Key1, T1> const &lhs, ft::MapIterator<Key2, T2> const &rhs) { return (lhs.base() == rhs.base()); }
 
 	template<class Key1, class T1, class Key2, class T2>
-	bool	operator!=(ft::MapIterator<Key1, T1> const &lhs, ft::MapIterator<Key2, T2> const &rhs) { return (lhs.getNode() != rhs.getNode()); }
+	bool	operator!=(ft::MapIterator<Key1, T1> const &lhs, ft::MapIterator<Key2, T2> const &rhs) { return !(lhs == rhs); }
 
 
 	/*---------- REVERSE ITERATORS ----------*/

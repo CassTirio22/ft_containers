@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 21:04:47 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/16 17:06:56 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/19 15:32:27 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -149,7 +149,7 @@ namespace ft {
 		}
 
 		void	erase(iterator pos) {
-			erase(pos.getNode()->_data.first);
+			erase(pos->first);
 		}
 
 		void	erase(iterator first, iterator last) {
@@ -205,15 +205,13 @@ namespace ft {
 		}
 
 		iterator	lower_bound(const key_type &k) {
-			iterator it(begin().getNode(), _rbt.getNullNode(), _rbt.getRoot());
-			iterator ite(end().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			iterator it(begin());
+			iterator ite(end());
 			for (; it != ite; it++) {
-				if (it.getNode()->_data.first == k)
+				if (it->first == k)
 					return (it);
-				else if (it.getNode()->_data.first > k) {
-					if (it.getNode() == it.getRoot())
-						return (it);
-					if (it.getNode() == _rbt.minimum(_rbt.getRoot()))
+				else if (it->first > k) {
+					if (it->first == begin()->first)
 						return (it);
 					return (--it);
 				}
@@ -222,41 +220,39 @@ namespace ft {
 		}
 
 		const_iterator	lower_bound(const key_type &k) const {
-			iterator it(begin().getNode(), _rbt.getNullNode(), _rbt.getRoot());
-			iterator ite(end().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			const_iterator it(begin());
+			const_iterator ite(end());
 			for (; it != ite; it++) {
-				if (it.getNode()->_data.first == k)
+				if (it->first == k)
 					return (it);
-				else if (it.getNode()->_data.first > k) {
-					if (it.getNode() == it.getRoot())
-						return (const_iterator(it));
-					if (it.getNode() == _rbt.minimum(_rbt.getRoot()))
-						return (const_iterator(it));
-					return (const_iterator(--it));
+				else if (it->first > k) {
+					if (it->first == begin()->first)
+						return (it);
+					return (--it);
 				}
 			}
 			return (end());
 		}
 
 		iterator	upper_bound(const key_type &k) {
-			iterator it(begin().getNode(), _rbt.getNullNode(), _rbt.getRoot());
-			iterator ite(end().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+			iterator it(begin());
+			iterator ite(end());
 			for (; it != ite; it++) {
-				if (it.getNode()->_data.first == k)
+				if (it->first == k)
 					return (++it);
-				else if (it.getNode()->_data.first > k)
+				else if (it->first > k)
 					return (it);
 			}
 			return (end());
 		}
 
-		const_iterator	upper_bound(const key_type &k) const {\
-			iterator it(begin().getNode(), _rbt.getNullNode(), _rbt.getRoot());
-			iterator ite(end().getNode(), _rbt.getNullNode(), _rbt.getRoot());
+		const_iterator	upper_bound(const key_type &k) const {
+			const_iterator it(begin());
+			const_iterator ite(end());
 			for (; it != ite; it++) {
-				if (it.getNode()->_data.first == k)
+				if (it->first == k)
 					return (++it);
-				else if (it.getNode()->_data.first > k)
+				else if (it->first > k)
 					return (const_iterator(it));
 			}
 			return (end());
@@ -274,20 +270,12 @@ namespace ft {
 
 		allocator_type	get_allocator(void) const { return (_alloc); }
 
-		/*----- Utils -----*/
-
-		void	affRbt(void) const { _rbt.aff_tree(_rbt.getRoot(), 0); }
-
-		void	affNode(Node<const Key, T> *node) const { _rbt.aff_node(node); }
-		
-		Node<const Key, T>	*getRoot(void) const { return (_rbt.getRoot()); }
-
 	};
 
 	/*---------- NON-MEMBER FUNCTIONS ----------*/
 
 	/*----- Relational operator -----*/
-	
+
 	template<class Key, class T, class Compare, class Alloc>
 	bool	operator==(const ft::map<Key, T, Compare, Alloc> &lhs, const ft::map<Key, T, Compare, Alloc> &rhs) {
 			if (lhs.size() == rhs.size() && ft::equal(lhs.begin(), lhs.end(), rhs.begin()))
