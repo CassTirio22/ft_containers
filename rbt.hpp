@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/16 16:53:45 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/19 16:51:41 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -435,7 +435,7 @@ namespace ft {
 			b->_right->_parent = b;
 			b->_color = a->_color;
 			b->_db = a->_db;
-			
+
 			if (b->_left == a || b->_right == a)
 				a->_parent = b;
 			else
@@ -532,7 +532,7 @@ namespace ft {
 
 			rbt._root = _root;
 			rbt._null_node = _null_node;
-			
+
 			_root = rootTmp;
 			_null_node = nullNodeTmp;
 		}

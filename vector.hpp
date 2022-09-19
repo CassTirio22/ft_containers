@@ -6,13 +6,14 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/15 17:13:07 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/19 17:06:09 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 
+# include <iostream>
 # include "utils.hpp"
 # include "iterators.hpp"
 # include <memory>

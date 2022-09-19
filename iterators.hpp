@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/02 14:20:44 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/19 16:01:14 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/19 17:02:10 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,6 +330,10 @@ namespace ft {
 
 		/*----- Utils -----*/
 
+		Node	*base(void) const { return (_node); }
+
+	private:
+
 		Node	*ft_next(Node *node) {
 			Node	*tmp = node;
 
@@ -385,8 +389,6 @@ namespace ft {
 				tmp = tmp->_left;
 			return (tmp);
 		}
-
-		Node	*base(void) const { return (_node); }
 	};
 
 
