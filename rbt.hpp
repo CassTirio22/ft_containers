@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/19 16:51:41 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/20 19:15:51 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 # define RED false
 
 # include "pair.hpp"
-# include <iostream>
 # include <functional>
 # include <memory>
 

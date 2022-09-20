@@ -6,12 +6,13 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:57:07 by ctirions          #+#    #+#             */
-/*   Updated: 2022/08/25 18:15:21 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/20 19:15:34 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef UTILS_HPP
 # define UTILS_HPP
+# include <iostream>
 
 namespace ft {
 

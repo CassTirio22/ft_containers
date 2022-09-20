@@ -6,14 +6,13 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/19 17:06:09 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/20 19:15:54 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef VECTOR_HPP
 # define VECTOR_HPP
 
-# include <iostream>
 # include "utils.hpp"
 # include "iterators.hpp"
 # include <memory>
@@ -267,20 +266,19 @@ namespace ft {
 
 		iterator	insert(iterator position, const_reference val) {
 			size_type	pos = 0;
-			size_type	end = this->_size;
 
 			for (; pos <= this->_size; pos++)
 				if (&*position == &this->_value[pos])
 					break ;
 			if (pos == this->_size && position != this->end())
 				return (iterator());
+			if (pos > _size)
+				throw (std::out_of_range("index out of range"));
 			this->_size++;
 			this->reserve(this->_size);
-			while (pos < end) {
-				this->_value[end] = this->_value[end - 1];
-				end--;
-			}
-			this->_alloc.construct(&this->_value[end], val);
+			for (size_type i = 0; i < _size - pos; i++)
+				_value[_size - i - 1] = _value[_size - i - 2];
+			this->_value[pos] = val;
 			return (iterator(&this->_value[pos]));
 		}
 
@@ -298,7 +296,7 @@ namespace ft {
 			for (size_type i = 0; i < this->_size - n - pos; i++)
 				this->_value[this->_size - i - 1] = this->_value[this->_size - n - i - 1];
 			for (size_type i = 0; i < n; i++)
-				this->_alloc.construct(&this->_value[pos + i], val);
+				this->_value[pos + i] = val;
 		}
 
 		template <class InputIterator>
