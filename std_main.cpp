@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
+/*   std_main.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/09/02 19:01:41 by zminhas           #+#    #+#             */
-/*   Updated: 2022/09/20 19:13:14 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/22 17:00:10 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,7 @@
 #define CYAN "\033[36m"
 #define WHITE "\033[37m"
 
-#ifndef NAMESPACE
-# define NAMESPACE ft
-#endif
+#define NAMESPACE std
 
 int	main(void)
 {
@@ -826,4 +824,3 @@ int	main(void)
 	return (0);
 }
 
-// clear && c++ -Wall -Werror -Wextra -D NAMESPACE=ft main.cpp && time ./a.out

@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/03 11:07:28 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/20 19:15:54 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/22 16:37:49 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -316,7 +316,7 @@ namespace ft {
 			for (size_type i = 0; i < this->_size - n - pos; i++)
 				this->_value[this->_size - i - 1] = this->_value[this->_size - n - i - 1];
 			for (size_type i = 0; i < n; i++)
-				this->_alloc.construct(&this->_value[pos + i], *first++);
+				_value[pos + i] = *first++;
 		}
 
 		iterator	erase(iterator position) {

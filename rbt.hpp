@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/24 15:54:12 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/20 19:15:51 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/22 16:38:33 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -443,26 +443,6 @@ namespace ft {
 			a->_right = tmpRight;
 			a->_color = tmpColor;
 			a->_db = tmpDb;
-		}
-
-		void	aff_node(Node *node) const {
-			std::string	color;
-			node->_color ? color = "black" : color = "red";
-			std::cout << node->_data.first << " | " << node->_data.second << " | " << color << std::endl;
-		}
-
-		void	aff_tree(Node *node, int space) const {
-			int i;
-			if(node != _null_node) {
-				space = space + 10;
-				aff_tree(node->_right, space);
-				std::cout << std::endl;
-				for (i = 10; i < space; i++)
-					std::cout << " ";
-				aff_node(node);
-				std::cout << std::endl;
-				aff_tree(node->_left, space);
-			}
 		}
 
 		Node	*minimum(Node* x) const {

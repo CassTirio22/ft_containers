@@ -6,7 +6,7 @@
 /*   By: ctirions <ctirions@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 21:04:47 by ctirions          #+#    #+#             */
-/*   Updated: 2022/09/20 16:18:29 by ctirions         ###   ########.fr       */
+/*   Updated: 2022/09/22 16:50:01 by ctirions         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,7 +290,7 @@ namespace ft {
 
 	template<class Key, class T, class Compare, class Alloc>
 	bool	operator<(const ft::map<Key, T, Compare, Alloc> &lhs, const ft::map<Key, T, Compare, Alloc> &rhs) {
-		return (ft::lexicographicla_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
 	}
 
 	template<class Key, class T, class Compare, class Alloc>
